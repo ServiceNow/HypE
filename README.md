@@ -36,6 +36,10 @@ To run HypE or any of the baselines you should define the following parameters:
 
 * Run `python main.py -model model -dataset dataset -lr lr -nr nr -out_channels out_channels -filt_w filt_w -stride stride -emb_dim emb_dim -hidden_drop hidden_drop -input_drop input_drop`
 
+## Baselines
+
+The baselines implemented in this package are m-DistMult, m-CP, m-SImplE, Shift1Left, and m-TransH.
+
 ## Cite HypE
 
 If you use this package for published work, please cite the following:
