@@ -38,7 +38,7 @@ To run HypE or any of the baselines you should define the following parameters:
 
 ## Baselines
 
-The baselines implemented in this package are m-DistMult, m-CP, m-SImplE, Shift1Left, and m-TransH.
+The baselines implemented in this package are m-DistMult, m-CP, m-SimplE, Shift1Left, and m-TransH.
 
 ## Cite HypE
 
