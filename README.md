@@ -1,5 +1,3 @@
-# HypE
-
 
 Summary
 =======
