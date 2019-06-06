@@ -37,3 +37,29 @@ To run HypE or any of the baselines you should define the following parameters:
 `hidden_drop`: drop out rate for hidden layer of all models
 
 * Run `python main.py -model model -dataset dataset -lr lr -nr nr -out_channels out_channels -filt_w filt_w -stride stride -emb_dim emb_dim -hidden_drop hidden_drop -input_drop input_drop`
+
+## Cite HypE
+
+If you use this package for published work, please cite the following:
+
+
+Contact
+=======
+
+Bahare Fatemi
+
+Computer Science Department
+
+The University of British Columbia
+
+201-2366 Main Mall, Vancouver, BC, Canada (V6T 1Z4)  
+
+<bfatemi@cs.ubc.ca>
+
+
+License
+=======
+
+Licensed under the GNU General Public License Version 3.0.
+<https://www.gnu.org/licenses/gpl-3.0.en.html>
+
