@@ -40,11 +40,6 @@ To run HypE or any of the baselines you should define the following parameters:
 
 The baselines implemented in this package are m-DistMult, m-CP, m-SimplE, Shift1Left, and m-TransH.
 
-## Cite HypE
-
-If you use this package for published work, please cite the following:
-[Knowledge Hypergraphs: Extending Knowledge Graphs Beyond Binary Relations](https://arxiv.org/abs/1906.00137)
-
 Contact
 =======
 
