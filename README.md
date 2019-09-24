@@ -2,7 +2,7 @@
 Summary
 =======
 
-This is the implementation of the model proposed in [Knowledge Hypergraphs: Extending Knowledge Graphs Beyond Binary Relations](https://arxiv.org/abs/1906.00137) for knowledge hypergraph embedding and also all the baselines for this task. It can be also used to learn `HypE` models for any input model. The software can be also used as a framework to implement new knowledge hypergraph embedding models.
+This is the implementation of the model proposed in Knowledge Hypergraphs: Extending Knowledge Graphs Beyond Binary Relations for knowledge hypergraph embedding and also all the baselines for this task. It can be also used to learn `HypE` models for any input model. The software can be also used as a framework to implement new knowledge hypergraph embedding models.
 
 ## Dependencies
 
