@@ -34,7 +34,7 @@ class MDistMult(torch.nn.Module):
         x = torch.sum(x, dim=1)
         return x
 
-class MPD(torch.nn.Module):
+class MCP(torch.nn.Module):
     def __init__(self, dataset, emb_dim, **kwargs):
         super(MPD, self).__init__()
         self.emb_dim = emb_dim
@@ -78,7 +78,7 @@ class MPD(torch.nn.Module):
         x = torch.sum(x, dim=1)
         return x
 
-class MSimplE(torch.nn.Module):
+class HSimplE(torch.nn.Module):
     def __init__(self, dataset, emb_dim, **kwargs):
         super(MSimplE, self).__init__()
         self.emb_dim = emb_dim
@@ -109,38 +109,6 @@ class MSimplE(torch.nn.Module):
         x = self.hidden_drop(x)
         x = torch.sum(x, dim=1)
         return x
-
-class Shift1Left(torch.nn.Module):
-    def __init__(self, dataset, emb_dim, **kwargs):
-        super(Shift1Left, self).__init__()
-        self.emb_dim = emb_dim
-        self.E = torch.nn.Embedding(dataset.num_ent(), emb_dim, padding_idx=0)
-        self.R = torch.nn.Embedding(dataset.num_rel(), emb_dim, padding_idx=0)
-        self.hidden_drop_rate = kwargs["hidden_drop"]
-        self.hidden_drop = torch.nn.Dropout(self.hidden_drop_rate)
- 
-    def init(self):
-        self.E.weight.data[0] = torch.ones(self.emb_dim)
-        xavier_normal_(self.E.weight.data[1:])
-        xavier_normal_(self.R.weight.data)
-
-    def shift(self, v, sh):
-        y = torch.cat((v[:, sh:], v[:, :sh]), dim=1)
-        return y
-
-    def forward(self, r_idx, e1_idx, e2_idx, e3_idx, e4_idx, e5_idx, e6_idx):
-        r = self.R(r_idx)
-        e1 = self.E(e1_idx)
-        e2 = self.shift(self.E(e2_idx), 1)
-        e3 = self.shift(self.E(e3_idx), 2)
-        e4 = self.shift(self.E(e4_idx), 3)
-        e5 = self.shift(self.E(e5_idx), 4)
-        e6 = self.shift(self.E(e6_idx), 5)
-        x = r * e1 * e2 * e3 * e4 * e5 * e6
-        x = self.hidden_drop(x)
-        x = torch.sum(x, dim=1)
-        return x
-
 
 class HypE(torch.nn.Module):
     def __init__(self, d, emb_dim, **kwargs):
@@ -186,16 +154,12 @@ class HypE(torch.nn.Module):
         e = self.E(e_idx).view(-1, 1, 1, self.E.weight.size(1))
         r = self.R(r_idx)
         x = e
-        # x = self.bn0(e)
-        # x = self.activation2(x)
         x = self.inp_drop(x)
         one_hot_target = (pos == torch.arange(self.max_arity).reshape(self.max_arity)).float().to(self.device)
         poses = one_hot_target.repeat(r.shape[0]).view(-1, self.max_arity)
         one_hot_target.requires_grad = False
         poses.requires_grad = False
         k = self.fc2(poses)
-        # k = self.sig(k)
-        # k = self.fc2(poses)
         k = k.view(-1, self.in_channels, self.out_channels, self.filt_h, self.filt_w)
         k = k.view(e.size(0)*self.in_channels*self.out_channels, 1, self.filt_h, self.filt_w)
         x = x.permute(1, 0, 2, 3)
@@ -206,7 +170,6 @@ class HypE(torch.nn.Module):
         x = x.permute(0, 3, 1, 2).contiguous()
         x = x.view(e.size(0), -1)
         x = self.fc(x)
-        # x = self.sig(x)
         return x
 
     def forward(self, r_idx, e1_idx, e2_idx, e3_idx, e4_idx, e5_idx, e6_idx, ms, bs):
@@ -222,7 +185,6 @@ class HypE(torch.nn.Module):
         x = self.hidden_drop(x)
         x = torch.sum(x, dim=1)
         return x
-
 
 
 class MTransH(torch.nn.Module):
@@ -286,4 +248,5 @@ class MTransH(torch.nn.Module):
         x = self.hidden_drop(x)
         x = -1 * torch.norm(x, p=2, dim=1)
         return x
+
 

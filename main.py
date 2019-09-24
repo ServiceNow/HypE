@@ -49,16 +49,15 @@ class Experiment:
 
         if(self.model_name == "MDistMult"):
             model = MDistMult(self.dataset, self.emb_dim, **self.kwargs).to(self.device)
-        elif(self.model_name == "MPD"):
-            model = MPD(self.dataset, self.emb_dim, **self.kwargs).to(self.device)
-        elif(self.model_name == "MSimplE"):
-            model = MSimplE(self.dataset, self.emb_dim, **self.kwargs).to(self.device)
-        elif(self.model_name == "Shift1Left"):
-            model = Shift1Left(self.dataset, self.emb_dim, **self.kwargs).to(self.device)
+        elif(self.model_name == "MCP"):
+            model = MCP(self.dataset, self.emb_dim, **self.kwargs).to(self.device)
+        elif(self.model_name == "HSimplE"):
+            model = HSimplE(self.dataset, self.emb_dim, **self.kwargs).to(self.device)
         elif(self.model_name == "HypE"):
             model = HypE(self.dataset, self.emb_dim, **self.kwargs).to(self.device)
         elif(self.model_name == "MTransH"):
             model = MTransH(self.dataset, self.emb_dim, **self.kwargs).to(self.device)
+                
         
         model.init()
         
@@ -75,7 +74,7 @@ class Experiment:
                 last_batch = self.dataset.was_last_batch()
                 opt.zero_grad()
                 number_of_positive = len(np.where(targets > 0)[0])
-                if(self.model_name == "HypE"):
+                if(self.model_name == "HypE" or self.model_name == "HypE_DM"):
                     predictions = model.forward(r, e1, e2, e3, e4, e5, e6, ms, bs)
                 elif(self.model_name == "MTransH"):
                     predictions = model.forward(r, e1, e2, e3, e4, e5, e6, ms)
@@ -90,7 +89,7 @@ class Experiment:
             
             print("iteration#: " + str(it) + ", loss: " + str(losses))
 
-            if(it % 50 == 0):
+            if(it % 100 == 0):
                 model.eval()
                 with torch.no_grad():
                     print("validation:")
@@ -111,10 +110,10 @@ class Experiment:
     
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument('-model', type=str)
-    parser.add_argument('-dataset', type=str)
+    parser.add_argument('-model', type=str, default="HypE_DM")
+    parser.add_argument('-dataset', type=str, default="JF17K")
     parser.add_argument('-lr', type=float)
-    parser.add_argument('-nr', type=int)
+    parser.add_argument('-nr', type=int, default=10)
     parser.add_argument('-out_channels', type=int, default=2)
     parser.add_argument('-filt_w', type=int, default=2)
     parser.add_argument('-emb_dim', type=int, default=200)
