@@ -43,6 +43,39 @@ class Experiment:
         return torch.stack(seq)
 
 
+    def load_and_test(self):
+        print("Testing the %s model..." % self.model_name)
+
+        if(self.model_name == "MDistMult"):
+            model = MDistMult(self.dataset, self.emb_dim, **self.kwargs).to(self.device)
+        elif(self.model_name == "MCP"):
+            model = MCP(self.dataset, self.emb_dim, **self.kwargs).to(self.device)
+        elif(self.model_name == "HSimplE"):
+            model = HSimplE(self.dataset, self.emb_dim, **self.kwargs).to(self.device)
+        elif(self.model_name == "HypE"):
+            model = HypE(self.dataset, self.emb_dim, **self.kwargs).to(self.device)
+        elif(self.model_name == "MTransH"):
+            model = MTransH(self.dataset, self.emb_dim, **self.kwargs).to(self.device)
+
+
+        model.init()
+        ####################
+        if self.model_name=='HSimplE':
+            print("LOADING HSimplE")
+            model.load_state_dict(torch.load('./data/HSimplE-0.01.chkpnt'))
+        elif self.model_name=='MTransH':
+            print("LOADING MTransH")
+            model.load_state_dict(torch.load('./data/MTransH-0.06.chkpnt'))
+        else:
+            print("NO MODEL FOUND")
+        model.eval()
+        with torch.no_grad():
+            #print("test in iteration " + str(best_itr) + ":")
+            tester = Tester(self.dataset, model, "test", self.model_name)
+            tester.test()
+
+
+
     def train_and_eval(self):
         print("Training the %s model..." % self.model_name)
         print("Number of training data points: %d" % len(self.dataset.data["train"]))
@@ -57,17 +90,17 @@ class Experiment:
             model = HypE(self.dataset, self.emb_dim, **self.kwargs).to(self.device)
         elif(self.model_name == "MTransH"):
             model = MTransH(self.dataset, self.emb_dim, **self.kwargs).to(self.device)
-                
-        
+
+
         model.init()
-        
+
         opt = torch.optim.Adagrad(model.parameters(), lr=self.learning_rate)
         loss_layer = torch.nn.CrossEntropyLoss()
         print("Starting training...")
         best_mrr = 0
         for it in range(1, self.num_iterations+1):
             last_batch = False
-            model.train()    
+            model.train()
             losses = 0
             while not last_batch:
                 r, e1, e2, e3, e4, e5, e6, targets, ms, bs = self.dataset.next_batch(self.batch_size, neg_ratio=self.neg_ratio, device=self.device)
@@ -86,7 +119,7 @@ class Experiment:
                 loss.backward()
                 opt.step()
                 losses += loss.item()
-            
+
             print("iteration#: " + str(it) + ", loss: " + str(losses))
 
             if(it % 100 == 0):
@@ -99,7 +132,7 @@ class Experiment:
                         best_mrr = mrr
                         best_model = model
                         best_itr = it
-                        
+
 
         best_model.eval()
         with torch.no_grad():
@@ -107,7 +140,7 @@ class Experiment:
             tester = Tester(self.dataset, best_model, "test", self.model_name)
             tester.test()
 
-    
+
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('-model', type=str, default="HypE_DM")
@@ -123,6 +156,7 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     dataset = dataset(args.dataset)
-    experiment = Experiment(args.model, dataset, num_iterations=500, batch_size=128, learning_rate=args.lr, emb_dim=args.emb_dim, 
+    experiment = Experiment(args.model, dataset, num_iterations=500, batch_size=128, learning_rate=args.lr, emb_dim=args.emb_dim,
                             hidden_drop=args.hidden_drop, input_drop=args.input_drop, neg_ratio=args.nr, in_channels=1, out_channels=args.out_channels, filt_h=1, filt_w=args.filt_w, stride=args.stride)
-    experiment.train_and_eval()
+    experiment.load_and_test()
+    #experiment.train_and_eval()
