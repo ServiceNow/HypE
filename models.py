@@ -80,7 +80,7 @@ class MCP(torch.nn.Module):
 
 class HSimplE(torch.nn.Module):
     def __init__(self, dataset, emb_dim, **kwargs):
-        super(MSimplE, self).__init__()
+        super(HSimplE, self).__init__()
         self.emb_dim = emb_dim
         self.E = torch.nn.Embedding(dataset.num_ent(), emb_dim, padding_idx=0)
         self.R = torch.nn.Embedding(dataset.num_rel(), emb_dim, padding_idx=0)
