@@ -153,10 +153,11 @@ if __name__ == '__main__':
     parser.add_argument('-hidden_drop', type=float, default=0.2)
     parser.add_argument('-input_drop', type=float, default=0.2)
     parser.add_argument('-stride', type=int, default=2)
+    parser.add_argument('-itr', type=int, default=500)
     args = parser.parse_args()
 
     dataset = dataset(args.dataset)
-    experiment = Experiment(args.model, dataset, num_iterations=500, batch_size=128, learning_rate=args.lr, emb_dim=args.emb_dim,
+    experiment = Experiment(args.model, dataset, num_iterations=itr, batch_size=128, learning_rate=args.lr, emb_dim=args.emb_dim,
                             hidden_drop=args.hidden_drop, input_drop=args.input_drop, neg_ratio=args.nr, in_channels=1, out_channels=args.out_channels, filt_h=1, filt_w=args.filt_w, stride=args.stride)
-    experiment.load_and_test()
-    #experiment.train_and_eval()
+    # experiment.load_and_test()
+    experiment.train_and_eval()
