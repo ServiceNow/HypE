@@ -17,6 +17,8 @@ class Tester:
         self.all_facts_as_set_of_tuples = set(self.allFactsAsTuples())
 
     def get_rank(self, sim_scores):#assuming the test fact is the first one
+        print("=== SIM STATS ====")
+        print(min(sim_scores), sim_scores[0], max(sim_scores), np.mean(sim_scores), np.median(sim_scores) )
         return (sim_scores >= sim_scores[0]).sum()
 
     def create_queries(self, fact, position):

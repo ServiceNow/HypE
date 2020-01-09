@@ -15,6 +15,7 @@ class Dataset:
         self.data["train"] = self.read(self.dir + "train.txt")
         if(ds_name == "JF17K"):
             self.data["test"] = self.read_test(self.dir + "test.txt")
+            print("NUMBER OF TEST SAMPLES: ", self.data["test"])
         else:
             self.data["test"] = self.read(self.dir + "test.txt")
         self.data["valid"] = self.read(self.dir + "valid.txt")
@@ -27,7 +28,7 @@ class Dataset:
         for i, line in enumerate(lines):
             tuples[i] = self.tuple2ids(line.strip().split("\t"))
         return tuples
-    
+
     def read_test(self, file_path):
         with open(file_path, "r") as f:
             lines = f.readlines()
@@ -39,10 +40,10 @@ class Dataset:
 
     def num_ent(self):
         return len(self.ent2id)
-    
+
     def num_rel(self):
         return len(self.rel2id)
-                     
+
     def tuple2ids(self, tuple_):
         output = np.zeros(self.max_arity + 1)
         for ind,t in enumerate(tuple_):
@@ -51,24 +52,24 @@ class Dataset:
             else:
                 output[ind] = self.get_ent_id(t)
         return output
-                     
+
     def get_ent_id(self, ent):
         if not ent in self.ent2id:
             self.ent2id[ent] = len(self.ent2id)
         return self.ent2id[ent]
-            
+
     def get_rel_id(self, rel):
         if not rel in self.rel2id:
             self.rel2id[rel] = len(self.rel2id)
         return self.rel2id[rel]
-                     
+
     def rand_ent_except(self, ent):
         # id 0 is reserved for nothing. randint should return something between zero to len of entities
         rand_ent = random.randint(1, self.num_ent() - 1)
         while(rand_ent == ent):
             rand_ent = random.randint(1, self.num_ent() - 1)
         return rand_ent
-                     
+
     def next_pos_batch(self, batch_size):
         if self.batch_index + batch_size < len(self.data["train"]):
             batch = self.data["train"][self.batch_index: self.batch_index+batch_size]
@@ -103,8 +104,8 @@ class Dataset:
         ms = torch.tensor(ms).float().to(device)
         bs = torch.tensor(bs).float().to(device)
         return r, e1, e2, e3, e4, e5, e6, labels, ms, bs
-    
-    
+
+
     def generate_neg(self, pos_batch, neg_ratio):
         arities = [8 - (t == 0).sum() for t in pos_batch]
         pos_batch[:,-1] = arities
