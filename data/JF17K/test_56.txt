@@ -1,0 +1,71 @@
+instance10651	base.theosbornboysaregrowing.trip	0lhn5	01h_1n	03qb78c	04d1j3z	04f97tq
+instance10652	base.theosbornboysaregrowing.trip	0lhn5	04_c1nw	03qb78c	04dssd2	04f97tq
+instance10653	base.theosbornboysaregrowing.trip	0lhn5	0dv34	03qb78c	04dssd2	04f9pnt
+instance10654	base.theosbornboysaregrowing.trip	0lhn5	01jwjg	03qb78c	04dsscx	04f97t9
+instance10655	base.theosbornboysaregrowing.trip	0lhn5	04_c1nw	03qb78c	04d1j3z	04f97tq
+instance10656	base.theosbornboysaregrowing.trip	0lhn5	0dv34	03qb78c	04d1j3z	04f9pnt
+instance10657	base.theosbornboysaregrowing.trip	0lhn5	01jwjg	03qb78c	04d1j3z	04f9pnt
+instance10658	base.theosbornboysaregrowing.trip	0lhn5	012v4j	03qb78c	04d1j3z	04f97th
+instance10659	base.theosbornboysaregrowing.trip	0lhn5	0dv34	03qb78c	04dsscx	04f9pnt
+instance10660	base.theosbornboysaregrowing.trip	0lhn5	04_c1nw	03qb78c	04d1j3z	04f9pnt
+instance10661	base.theosbornboysaregrowing.trip	0lhn5	0dv34	03qb78c	04d1j3z	04f9pl9
+instance10662	base.theosbornboysaregrowing.trip	0lhn5	01jwjg	03qb78c	04d1j3z	04f9pl9
+instance10663	base.theosbornboysaregrowing.trip	0lhn5	01jwjg	03qb78c	04dssd2	04f9pl9
+instance10664	base.theosbornboysaregrowing.trip	0lhn5	01h_1n	03qb78c	04dsscx	04f97th
+instance10665	base.theosbornboysaregrowing.trip	0lhn5	0dv34	03qb78c	04dsscx	04f97t9
+instance10666	base.theosbornboysaregrowing.trip	0lhn5	0dv34	03qb78c	04dsscx	04f97tq
+instance10667	base.theosbornboysaregrowing.trip	0lhn5	0dv34	03qb78c	04d1j3z	04f97th
+instance10668	base.theosbornboysaregrowing.trip	0lhn5	0dv34	03qb78c	04d1j3z	04f97tq
+instance10669	base.theosbornboysaregrowing.trip	0lhn5	0dv34	03qb78c	04d1j3z	04f97t9
+instance10670	base.theosbornboysaregrowing.trip	0lhn5	012v4j	03qb78c	04dssd2	04f97tq
+instance10671	base.theosbornboysaregrowing.trip	0lhn5	01jwjg	03qb78c	04dssd2	04f97tq
+instance10672	base.theosbornboysaregrowing.trip	0lhn5	01jwjg	03qb78c	04dssd2	04f97t9
+instance10673	base.theosbornboysaregrowing.trip	0lhn5	012v4j	03qb78c	04dssd2	04f9pnt
+instance10674	base.theosbornboysaregrowing.trip	0lhn5	012v4j	03qb78c	04dsscx	04f9pnt
+instance10675	base.theosbornboysaregrowing.trip	0lhn5	01h_1n	03qb78c	04dssd2	04f9pnt
+instance10676	base.theosbornboysaregrowing.trip	0lhn5	012v4j	03qb78c	04dssd2	04f9pl9
+instance10677	base.theosbornboysaregrowing.trip	0lhn5	012v4j	03qb78c	04dsscx	04f9pl9
+instance10678	base.theosbornboysaregrowing.trip	0lhn5	01jwjg	03qb78c	04dsscx	04f9pl9
+instance10679	base.theosbornboysaregrowing.trip	0lhn5	0dv34	03qb78c	04dsscx	04f9pl9
+instance10680	base.theosbornboysaregrowing.trip	0lhn5	01h_1n	03qb78c	04dssd2	04f9pl9
+instance10681	base.theosbornboysaregrowing.trip	0lhn5	0dv34	03qb78c	04dssd2	04f97tq
+instance10682	base.theosbornboysaregrowing.trip	0lhn5	012v4j	03qb78c	04d1j3z	04f9pnt
+instance10683	base.theosbornboysaregrowing.trip	0lhn5	01jwjg	03qb78c	04dsscx	04f97tq
+instance10684	base.theosbornboysaregrowing.trip	0lhn5	01h_1n	03qb78c	04dsscx	04f9pl9
+instance10685	base.theosbornboysaregrowing.trip	0lhn5	01h_1n	03qb78c	04dsscx	04f97tq
+instance10686	base.theosbornboysaregrowing.trip	0lhn5	01jwjg	03qb78c	04d1j3z	04f97t9
+instance10687	base.theosbornboysaregrowing.trip	0lhn5	012v4j	03qb78c	04dsscx	04f97tq
+instance10688	base.theosbornboysaregrowing.trip	0lhn5	04_c1nw	03qb78c	04dsscx	04f97th
+instance10689	base.theosbornboysaregrowing.trip	0lhn5	012v4j	03qb78c	04d1j3z	04f97tq
+instance10690	base.theosbornboysaregrowing.trip	0lhn5	01h_1n	03qb78c	04dssd2	04f97t9
+instance15115	base.theosbornboysaregrowing.trip	0r2hn	034v_	03qb78c	04dsscx	04j14gz
+instance15116	base.theosbornboysaregrowing.trip	0r2hn	02fzs	03qb78c	04dsscx	04j14gz
+instance15117	base.theosbornboysaregrowing.trip	0r2hn	02fzs	03qb78c	04dssd2	04j14gz
+instance15118	base.theosbornboysaregrowing.trip	0r2hn	02fzs	03qb78c	04dssd2	04j14gs
+instance15119	base.theosbornboysaregrowing.trip	0r2hn	034v_	03qb78c	04dssd2	04j14gs
+instance15120	base.theosbornboysaregrowing.trip	0r2hn	02fzs	03qb78c	04dsscx	04f986k
+instance15121	base.theosbornboysaregrowing.trip	0r2hn	034v_	03qb78c	04dssd2	04j14gz
+instance15122	base.theosbornboysaregrowing.trip	0r2hn	02fzs	03qb78c	04dsscx	04j14gs
+instance15123	base.theosbornboysaregrowing.trip	0r2hn	034v_	03qb78c	04d1j3z	04j14gz
+instance15124	base.theosbornboysaregrowing.trip	0r2hn	02fzs	03qb78c	04d1j3z	04j14gz
+instance15972	base.theosbornboysaregrowing.trip	0l1pj	04_c1q0	03qb78c	04dssd2	04j14gs
+instance15973	base.theosbornboysaregrowing.trip	0l1pj	034v_	03qb78c	04dssd2	04j14gs
+instance15974	base.theosbornboysaregrowing.trip	0l1pj	04_c1q0	03qb78c	04dsscx	04f986k
+instance15975	base.theosbornboysaregrowing.trip	0l1pj	04_c1q0	03qb78c	04d1j3z	04j14pr
+instance17413	base.theosbornboysaregrowing.trip	0r62v	0hhdb	03qb78c	04dsscx	04f986k
+instance3374	education.education	023tdq	02bdq4	081k8	04g7d	011cct95	076h6
+instance3375	education.education	023tdq	02bdq4	081k8	02h40lc	011cct95	0156qk
+instance3376	education.education	023tdq	02bdq4	081k8	06nm1	011cct95	04g7x
+instance3377	education.education	023tdq	02bdq4	01zc2w	04g7x	011cct95	04g7x
+instance3378	education.education	023tdq	02bdq4	081k8	04g7x	011cct95	04g7x
+instance3379	education.education	023tdq	02bdq4	081k8	02h40lc	011cct95	04g7x
+instance3380	education.education	023tdq	02bdq4	01zc2w	04g7d	011cct95	0156qk
+instance3381	education.education	023tdq	02bdq4	01zc2w	06nm1	011cct95	0156qk
+instance3382	education.education	023tdq	02bdq4	081k8	04g7x	011cct95	076h6
+instance3383	education.education	023tdq	02bdq4	081k8	04g7d	011cct95	0156qk
+instance3384	education.education	023tdq	02bdq4	081k8	04g51	011cct95	04g7x
+instance3385	education.education	023tdq	02bdq4	01zc2w	02h40lc	011cct95	076h6
+instance3386	education.education	023tdq	02bdq4	01zc2w	02h40lc	011cct95	0156qk
+instance3387	education.education	023tdq	02bdq4	081k8	06nm1	011cct95	0156qk
+instance14548	education.education	0127vg_g	0128374g	01mkq	04rjg	0127vg_g	01zc2w
+instance14549	education.education	0127vg_g	0128374g	01mkq	05qjt	0127vg_g	01zc2w

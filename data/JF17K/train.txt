@@ -4964,7 +4964,6 @@ broadcast.tv_affiliation_duration	0gsg7	06zvs3
 tv.regular_tv_appearance	08l7th	05p3qkd	0k234p1	02py9yf
 tv.regular_tv_appearance	08l7th	05p3qkd	0c1pt7b	02py9yf
 business.company_product_relationship	03hqjy8	042wv66
-user.ajain.default_domain.admission_requirements	0trv	01yslw	016t_3	0db86	02ky346	04zx3q1
 broadcast.tv_affiliation_duration	0czf2k_	06zvs3
 base.nascar.nascar_race_result	05wt65	04cwlyj
 tv.tv_segment_performance	0_h8gdb	0_h7h10	0867q1
@@ -8109,19 +8108,6 @@ protected_sites.natural_or_cultural_site_listing	02kdkvt	01cq1t	02tvjq
 base.nascar.nascar_race_result	062y0h	05crl_3
 baseball.baseball_team_stats	03c74_8	01d5z
 sports.sports_team_season_record	07rj2g	06mp1hm
-education.education	023tdq	02bdq4	01zc2w	04g7x	011cct95	076h6
-education.education	023tdq	02bdq4	081k8	06nm1	011cct95	076h6
-education.education	023tdq	02bdq4	081k8	02h40lc	011cct95	076h6
-education.education	023tdq	02bdq4	01zc2w	04g7d	011cct95	04g7x
-education.education	023tdq	02bdq4	01zc2w	04g7d	011cct95	076h6
-education.education	023tdq	02bdq4	01zc2w	04g51	011cct95	04g7x
-education.education	023tdq	02bdq4	081k8	04g7x	011cct95	0156qk
-education.education	023tdq	02bdq4	01zc2w	04g7x	011cct95	0156qk
-education.education	023tdq	02bdq4	01zc2w	06nm1	011cct95	04g7x
-education.education	023tdq	02bdq4	01zc2w	02h40lc	011cct95	04g7x
-education.education	023tdq	02bdq4	01zc2w	06nm1	011cct95	076h6
-education.education	023tdq	02bdq4	081k8	04g51	011cct95	076h6
-education.education	023tdq	02bdq4	081k8	04g7d	011cct95	04g7x
 award.ranking	0bnqhdd	09ps01
 soccer.football_team_management_tenure	0223bl	02w6wh
 food.recipe_ingredient	0h0xm	09rglfb	05t56
@@ -26725,7 +26711,6 @@ user.szaijan.fantasy_football.projection	02sj2gw	04zly_	02sjlml
 american_football.game_rushing_statistics	062qp9	0791y81
 base.nascar.nascar_race_result	074x09	05cwsm1
 user.szaijan.fantasy_football.projection	02sj2gw	0cmld3	02sjlml
-education.education	016t_3	0fvd03	05h28n	03yywm	0ghwph4	02h400t
 theater.theater_production_venue_relationship	0hnfj85	08g4c7
 film.personal_film_appearance	03hjsx8	0130sy
 award.category_ceremony_relationship	0znkmdg	0y5qnf0
@@ -34793,7 +34778,6 @@ base.nascar.nascar_race_result	062y5s	05cqq02
 wine.grape_variety_composition	04sr0	0410grc
 base.popstra.vacation_choice	0645vz_	05q_b
 theater.theater_production_venue_relationship	0zsvn6q	0k0fys8
-education.education	0127vg_g	0128374g	01mkq	01lj9	0127vg_g	01zc2w
 theater.theater_designer_gig	02hsh8d	0f12n7h	0n4f9kp
 american_football.player_game_statistics	09_19y	04y6_qr
 broadcast.tv_affiliation_duration	0hh6l	0bz6rn
@@ -61187,7 +61171,6 @@ tv.tv_program_writer_relationship	0k6jyf	0r94hcq
 film.dubbing_performance	02h40lc	063l_k	0gtwkcb	096054
 film.film_regional_release_date	03spz	02z3r8t
 award.category_ceremony_relationship	0znkkcj	01xpy0f
-education.education	04zx3q1	01w5m	06hsk	0fdys	0c4dtts	02822
 base.famouspets.pet_ownership	025pvc	05k627h
 base.schemastaging.sports_league_season_ranking	0swkrjx	07c3bv
 award.category_ceremony_relationship	0zn8h9p	0y80rx_
@@ -61845,7 +61828,6 @@ sports.sports_team_coach_tenure	02md_2	0404n65
 people.marriage	086dny	0f04c
 award.category_ceremony_relationship	0_vjm_y	0gbr1kh
 sports.sports_league_participation	0gkzsgl	0355r8	0gkzsgl	02_cq0
-user.ajain.default_domain.admission_requirements	0trv	01yslw	019v9k	01mkq	02ky346	03bwzr4
 base.schemastaging.sports_league_season_ranking	0t53hqs	03mp4f
 base.contractbridge.bridge_tournament_standings	02x3mlp	05bcvbw	05bcvcc
 tv.tv_network_duration	04my5c	03xh5w

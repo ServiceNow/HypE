@@ -2204,9 +2204,6 @@ theater.theater_designer_gig	026sdt1	0j_fxxd	0k7kz9v
 base.schemastaging.phone_sandbox	02h40lc	0q52p9g	02j71	0pl4nkj
 sports.sports_team_season_record	07mpzj6	0h5nw_
 american_football.game_receiving_statistics	0792h9t	0cwzrh
-education.education	023tdq	02bdq4	081k8	04g51	011cct95	0156qk
-education.education	023tdq	02bdq4	01zc2w	04g51	011cct95	076h6
-education.education	023tdq	02bdq4	01zc2w	04g51	011cct95	0156qk
 baseball.baseball_team_stats	03c74_8	01slc
 award.ranking	07xzc3_	06n3md
 fictional_universe.fictional_employment_tenure	0c0lmdg	0bxw5yj	0b_kb2b

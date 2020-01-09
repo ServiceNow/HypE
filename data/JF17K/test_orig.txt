@@ -3372,6 +3372,20 @@ instance3370	tennis.tennis_tournament_championship	062p80	01sj6j
 instance3371	basketball.basketball_player_stats	096mjy	02r1p2l	0jm8l
 instance3372	theater.theater_production_staff_gig	0v1sdzk	0k65c15	04t64n
 instance3373	freebase.list_entry	01ym2x	05bv23n
+instance3374	education.education	023tdq	02bdq4	081k8	04g7d	011cct95	076h6
+instance3375	education.education	023tdq	02bdq4	081k8	02h40lc	011cct95	0156qk
+instance3376	education.education	023tdq	02bdq4	081k8	06nm1	011cct95	04g7x
+instance3377	education.education	023tdq	02bdq4	01zc2w	04g7x	011cct95	04g7x
+instance3378	education.education	023tdq	02bdq4	081k8	04g7x	011cct95	04g7x
+instance3379	education.education	023tdq	02bdq4	081k8	02h40lc	011cct95	04g7x
+instance3380	education.education	023tdq	02bdq4	01zc2w	04g7d	011cct95	0156qk
+instance3381	education.education	023tdq	02bdq4	01zc2w	06nm1	011cct95	0156qk
+instance3382	education.education	023tdq	02bdq4	081k8	04g7x	011cct95	076h6
+instance3383	education.education	023tdq	02bdq4	081k8	04g7d	011cct95	0156qk
+instance3384	education.education	023tdq	02bdq4	081k8	04g51	011cct95	04g7x
+instance3385	education.education	023tdq	02bdq4	01zc2w	02h40lc	011cct95	076h6
+instance3386	education.education	023tdq	02bdq4	01zc2w	02h40lc	011cct95	0156qk
+instance3387	education.education	023tdq	02bdq4	081k8	06nm1	011cct95	0156qk
 instance3388	baseball.baseball_team_stats	02h7s8p	02d02
 instance3389	base.marchmadness.ncaa_tournament_seed	03cmtnb	0b_734
 instance3390	american_football.player_rushing_statistics	0cjp42	04y6_qr
@@ -14532,6 +14546,8 @@ instance14544	base.trixtypes.stat	0h4x_j9	0c06qh6
 instance14545	base.marchmadness.ncaa_tournament_seed	05c_bv1	0b_734
 instance14546	baseball.batting_statistics	0713r	02h7s6b	096f7g
 instance14547	base.contractbridge.bridge_tournament_standings	02x30vy	05bbmyh	05bbrt8
+instance14548	education.education	0127vg_g	0128374g	01mkq	04rjg	0127vg_g	01zc2w
+instance14549	education.education	0127vg_g	0128374g	01mkq	05qjt	0127vg_g	01zc2w
 instance14550	american_football.game_rushing_statistics	04nt4c	07dls1p
 instance14551	award.ranking	0h6g9tv	01vs64
 instance14552	american_football.game_rushing_statistics	04qq1f	07dlmkf
