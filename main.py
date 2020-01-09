@@ -57,17 +57,17 @@ class Experiment:
             model = HypE(self.dataset, self.emb_dim, **self.kwargs).to(self.device)
         elif(self.model_name == "MTransH"):
             model = MTransH(self.dataset, self.emb_dim, **self.kwargs).to(self.device)
-                
-        
+
+
         model.init()
-        
+
         opt = torch.optim.Adagrad(model.parameters(), lr=self.learning_rate)
         loss_layer = torch.nn.CrossEntropyLoss()
         print("Starting training...")
         best_mrr = 0
         for it in range(1, self.num_iterations+1):
             last_batch = False
-            model.train()    
+            model.train()
             losses = 0
             while not last_batch:
                 r, e1, e2, e3, e4, e5, e6, targets, ms, bs = self.dataset.next_batch(self.batch_size, neg_ratio=self.neg_ratio, device=self.device)
@@ -86,7 +86,7 @@ class Experiment:
                 loss.backward()
                 opt.step()
                 losses += loss.item()
-            
+
             print("iteration#: " + str(it) + ", loss: " + str(losses))
 
             if(it % 100 == 0):
@@ -99,7 +99,7 @@ class Experiment:
                         best_mrr = mrr
                         best_model = model
                         best_itr = it
-                        
+
 
         best_model.eval()
         with torch.no_grad():
@@ -107,7 +107,7 @@ class Experiment:
             tester = Tester(self.dataset, best_model, "test", self.model_name)
             tester.test()
 
-    
+
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('-model', type=str, default="HypE_DM")
@@ -120,9 +120,10 @@ if __name__ == '__main__':
     parser.add_argument('-hidden_drop', type=float, default=0.2)
     parser.add_argument('-input_drop', type=float, default=0.2)
     parser.add_argument('-stride', type=int, default=2)
+    parser.add_argument('-num_iterations', type=int, default=500)
     args = parser.parse_args()
 
     dataset = dataset(args.dataset)
-    experiment = Experiment(args.model, dataset, num_iterations=500, batch_size=128, learning_rate=args.lr, emb_dim=args.emb_dim, 
+    experiment = Experiment(args.model, dataset, args.num_iterations, batch_size=128, learning_rate=args.lr, emb_dim=args.emb_dim,
                             hidden_drop=args.hidden_drop, input_drop=args.input_drop, neg_ratio=args.nr, in_channels=1, out_channels=args.out_channels, filt_h=1, filt_w=args.filt_w, stride=args.stride)
     experiment.train_and_eval()
