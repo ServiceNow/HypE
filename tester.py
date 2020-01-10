@@ -75,7 +75,8 @@ class Tester:
                     self.measure.update(rank, raw_or_fil)
         self.measure.normalize(normalizer)
         self.measure.print_()
-        return self.measure.mrr["fil"]
+        #return self.measure.mrr["fil"]
+        return self.measure
 
 
     def shred_facts(self, tuples):

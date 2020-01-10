@@ -79,9 +79,10 @@ class MCP(torch.nn.Module):
         return x
 
 class HSimplE(torch.nn.Module):
-    def __init__(self, dataset, emb_dim, **kwargs):
+    def __init__(self, dataset, emb_dim, max_arity=6, **kwargs):
         super(HSimplE, self).__init__()
         self.emb_dim = emb_dim
+        self.max_arity = max_arity
         self.E = torch.nn.Embedding(dataset.num_ent(), emb_dim, padding_idx=0)
         self.R = torch.nn.Embedding(dataset.num_rel(), emb_dim, padding_idx=0)
         self.hidden_drop_rate = kwargs["hidden_drop"]
@@ -100,12 +101,14 @@ class HSimplE(torch.nn.Module):
     def forward(self, r_idx, e1_idx, e2_idx, e3_idx, e4_idx, e5_idx, e6_idx):
         r = self.R(r_idx)
         e1 = self.E(e1_idx)
-        e2 = self.shift(self.E(e2_idx), int(1 * self.emb_dim/5))
-        e3 = self.shift(self.E(e3_idx), int(2 * self.emb_dim/5))
-        e4 = self.shift(self.E(e4_idx), int(3 * self.emb_dim/5))
-        e5 = self.shift(self.E(e5_idx), int(4 * self.emb_dim/5))
-        e6 = self.shift(self.E(e6_idx), int(5 * self.emb_dim/5))
-        x = r * e1 * e2 * e3 * e4 * e5 #* e6
+        e2 = self.shift(self.E(e2_idx), int(1 * self.emb_dim/self.max_arity))
+        e3 = self.shift(self.E(e3_idx), int(2 * self.emb_dim/self.max_arity))
+        e4 = self.shift(self.E(e4_idx), int(3 * self.emb_dim/self.max_arity))
+        e5 = self.shift(self.E(e5_idx), int(4 * self.emb_dim/self.max_arity))
+        e6 = self.shift(self.E(e6_idx), int(5 * self.emb_dim/self.max_arity))
+        x = r * e1 * e2 * e3 * e4 * e5
+        if self.max_arity == 6:
+            x = x * e6
         x = self.hidden_drop(x)
         x = torch.sum(x, dim=1)
         return x
