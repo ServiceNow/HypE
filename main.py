@@ -17,7 +17,7 @@ class Experiment:
         self.num_iterations = num_iterations
         self.batch_size = batch_size
         self.neg_ratio = neg_ratio
-        self.max_arity = 6
+        self.max_arity = 5
         self.dataset = dataset
         self.device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
         self.kwargs = {"in_channels":in_channels,"out_channels": out_channels, "filt_h": filt_h, "filt_w": filt_w, "hidden_drop": hidden_drop, "stride": stride, "input_drop":input_drop}

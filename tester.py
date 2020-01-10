@@ -34,7 +34,7 @@ class Tester:
             return [(r, e1, e2, e3, e4, i, e6) for i in range(1, self.dataset.num_ent())]
         elif position == 6:
             return [(r, e1, e2, e3, e4, e5, i) for i in range(1, self.dataset.num_ent())]
-        
+
     def add_fact_and_shred(self, fact, queries, raw_or_fil):
         if raw_or_fil == "raw":
             result = [tuple(fact)] + queries
@@ -42,7 +42,7 @@ class Tester:
             result = [tuple(fact)] + list(set(queries) - self.all_facts_as_set_of_tuples)
         return self.shred_facts(result)
 
-    
+
     def test(self):
         settings = ["raw", "fil"]
         normalizer = 0
@@ -56,7 +56,7 @@ class Tester:
                     if(self.model_name == "HypE"):
                         ms = np.zeros((len(r),6))
                         bs = np.ones((len(r), 6))
-                
+
                         ms[:, 0:arity] = 1
                         bs[:, 0:arity] = 0
 
@@ -70,7 +70,7 @@ class Tester:
                         sim_scores = self.model(r, e1, e2, e3, e4, e5, e6, ms).cpu().data.numpy()
                     else:
                         sim_scores = self.model(r, e1, e2, e3, e4, e5, e6).cpu().data.numpy()
-                           
+
                     rank = self.get_rank(sim_scores)
                     self.measure.update(rank, raw_or_fil)
         self.measure.normalize(normalizer)

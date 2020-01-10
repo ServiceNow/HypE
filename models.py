@@ -13,7 +13,7 @@ class MDistMult(torch.nn.Module):
         self.R = torch.nn.Embedding(dataset.num_rel(), emb_dim, padding_idx=0)
         self.hidden_drop_rate = kwargs["hidden_drop"]
         self.hidden_drop = torch.nn.Dropout(self.hidden_drop_rate)
-        
+
     def init(self):
         self.E.weight.data[0] = torch.ones(self.emb_dim)
         self.R.weight.data[0] = torch.ones(self.emb_dim)
@@ -48,7 +48,7 @@ class MCP(torch.nn.Module):
 
         self.hidden_drop_rate = kwargs["hidden_drop"]
         self.hidden_drop = torch.nn.Dropout(self.hidden_drop_rate)
-        
+
 
     def init(self):
         self.E1.weight.data[0] = torch.ones(self.emb_dim)
@@ -86,7 +86,7 @@ class HSimplE(torch.nn.Module):
         self.R = torch.nn.Embedding(dataset.num_rel(), emb_dim, padding_idx=0)
         self.hidden_drop_rate = kwargs["hidden_drop"]
         self.hidden_drop = torch.nn.Dropout(self.hidden_drop_rate)
- 
+
 
     def init(self):
         self.E.weight.data[0] = torch.ones(self.emb_dim)
@@ -100,12 +100,12 @@ class HSimplE(torch.nn.Module):
     def forward(self, r_idx, e1_idx, e2_idx, e3_idx, e4_idx, e5_idx, e6_idx):
         r = self.R(r_idx)
         e1 = self.E(e1_idx)
-        e2 = self.shift(self.E(e2_idx), int(1 * self.emb_dim/6))
-        e3 = self.shift(self.E(e3_idx), int(2 * self.emb_dim/6))
-        e4 = self.shift(self.E(e4_idx), int(3 * self.emb_dim/6))
-        e5 = self.shift(self.E(e5_idx), int(4 * self.emb_dim/6))
-        e6 = self.shift(self.E(e6_idx), int(5 * self.emb_dim/6))
-        x = r * e1 * e2 * e3 * e4 * e5 * e6
+        e2 = self.shift(self.E(e2_idx), int(1 * self.emb_dim/5))
+        e3 = self.shift(self.E(e3_idx), int(2 * self.emb_dim/5))
+        e4 = self.shift(self.E(e4_idx), int(3 * self.emb_dim/5))
+        e5 = self.shift(self.E(e5_idx), int(4 * self.emb_dim/5))
+        e6 = self.shift(self.E(e6_idx), int(5 * self.emb_dim/5))
+        x = r * e1 * e2 * e3 * e4 * e5 #* e6
         x = self.hidden_drop(x)
         x = torch.sum(x, dim=1)
         return x
@@ -124,24 +124,24 @@ class HypE(torch.nn.Module):
         rel_emb_dim = emb_dim
         self.E = torch.nn.Embedding(d.num_ent(), emb_dim, padding_idx=0)
         self.R = torch.nn.Embedding(d.num_rel(), rel_emb_dim, padding_idx=0)
-        
+
         self.bn0 = torch.nn.BatchNorm2d(self.in_channels)
         self.inp_drop = torch.nn.Dropout(0.2)
-        
+
         fc_length = (1-self.filt_h+1)*math.floor((emb_dim-self.filt_w)/self.stride + 1)*self.out_channels
-        
+
         self.bn2 = torch.nn.BatchNorm1d(fc_length)
         self.hidden_drop = torch.nn.Dropout(self.hidden_drop_rate)
         # Projection network
         self.fc = torch.nn.Linear(fc_length, emb_dim)
         self.device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
-        
+
         # size of the convolution filters outputted by the hypernetwork
         fc1_length = self.in_channels*self.out_channels*self.filt_h*self.filt_w
         # Hypernetwork
         self.fc1 = torch.nn.Linear(rel_emb_dim + self.max_arity, fc1_length)
         self.fc2 = torch.nn.Linear(self.max_arity, fc1_length)
-        
+
 
     def init(self):
         self.E.weight.data[0] = torch.ones(self.emb_dim)
@@ -201,7 +201,7 @@ class MTransH(torch.nn.Module):
         self.b3 = torch.nn.Embedding(dataset.num_rel(), 1)
         self.b4 = torch.nn.Embedding(dataset.num_rel(), 1)
         self.b5 = torch.nn.Embedding(dataset.num_rel(), 1)
-        
+
         self.hidden_drop_rate = kwargs["hidden_drop"]
         self.hidden_drop = torch.nn.Dropout(self.hidden_drop_rate)
 
@@ -236,11 +236,11 @@ class MTransH(torch.nn.Module):
         e1 = e1 * ms[:,0].unsqueeze(-1).expand_as(e1)
         e2 = self.pnr(e2_idx, r_idx) * self.b1(r_idx)
         e2 = e2 * ms[:,1].unsqueeze(-1).expand_as(e2)
-        e3 = self.pnr(e3_idx, r_idx) * self.b2(r_idx) 
+        e3 = self.pnr(e3_idx, r_idx) * self.b2(r_idx)
         e3 = e3 * ms[:,2].unsqueeze(-1).expand_as(e3)
         e4 = self.pnr(e4_idx, r_idx) * self.b3(r_idx)
         e4 = e4 * ms[:,3].unsqueeze(-1).expand_as(e4)
-        e5 = self.pnr(e5_idx, r_idx) * self.b4(r_idx) 
+        e5 = self.pnr(e5_idx, r_idx) * self.b4(r_idx)
         e5 = e5 * ms[:,4].unsqueeze(-1).expand_as(e5)
         e6 = self.pnr(e6_idx, r_idx) * self.b5(r_idx)
         e6 = e6 * ms[:,5].unsqueeze(-1).expand_as(e6)
