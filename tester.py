@@ -52,14 +52,12 @@ class Tester:
         if (self.valid_or_test == 'test' and self.dataset.data.get('test_2', None) is not None):
             self.measure_by_arity = {}
             # Iterate over tests sets by arity
-            for i in range(2,7):
+            for cur_arity in range(2,7):
                 # Reset the normalizer by arity
                 normalizer_by_arity = 0
-                test_by_arity = "test_{}".format(i)
+                test_by_arity = "test_{}".format(cur_arity)
+                print("************* CUR ARITY {} WITH ROWS {}".format(cur_arity, len(self.dataset.data[test_by_arity])))
                 for i, fact in enumerate(self.dataset.data[test_by_arity]):
-                    if i%10 == 0:
-                        print("Testing sample {}".format(i))
-
                     self.measure_by_arity[test_by_arity] = Measure()
                     arity = self.dataset.max_arity - (fact == 0).sum()
                     for j in range(1, arity + 1):
@@ -88,12 +86,18 @@ class Tester:
 
                             rank = self.get_rank(sim_scores)
                             self.measure_by_arity[test_by_arity].update(rank, raw_or_fil)
-                            self.measure_by_arity[test_by_arity].normalize(normalizer)
-                            print("Results for arity {}".format(j))
-                            self.measure_by_arity[test_by_arity].print_()
+
+                    if i%100 == 0:
+                        print("Testing sample {} ---- Hit@10 not normalized {}".format(i, self.measure_by_arity[test_by_arity].hit10))
+
+                    #print("Hit@10 for arity {} NOT NORMALIZED".format(j), self.measure_by_arity[test_by_arity].hit10)
+                    self.measure_by_arity[test_by_arity].normalize(normalizer_by_arity)
+                    #print("Hit@10 for arity {}".format(j), self.measure_by_arity[test_by_arity].hit10)
             self.measure.normalize(normalizer)
             print("Results for ALL ARITIES")
             self.measure.print_()
+            print("Results by arity")
+            self.measure_by_arity.print_()
         return self.measure, self.measure_by_arity
 
 
