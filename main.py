@@ -31,6 +31,7 @@ class Experiment:
         self.stride = stride
         self.output_dir = self.create_output_dir()
         self.measure = None
+        self.measure_by_arity = None
         # Load the right model
         self.load_model()
 
@@ -72,22 +73,25 @@ class Experiment:
         # Load the pretrained model
         if self.pretrained is not None:
             print("Loading the pretrained model at {}".format(self.pretrained))
-            self.model.load_state_dict(torch.load(self.pretrained))
+            #self.model.load_state_dict(torch.load(self.pretrained))
+            H = torch.load(self.pretrained)
+            print(H['E.weight'].shape)
 
 
-    def load_and_test(self):
-        print("Testing the {} model on {}...".format(self.model_name, self.dataset))
+    def test_and_eval(self):
+        print("Testing the {} model on {}...".format(self.model_name, self.dataset.name))
         self.model.init()
         self.model.eval()
         with torch.no_grad():
-            tester = Tester(self.dataset, best_model, "test", self.model_name)
-            self.measure = tester.test()
+            tester = Tester(self.dataset, self.model, "test", self.model_name)
+            self.measure, self.measure_by_arity = tester.test()
 
 
     def train_and_eval(self):
         print("Training the %s model..." % self.model_name)
         print("Number of training data points: %d" % len(self.dataset.data["train"]))
 
+        best_model = None
         self.model.init()
 
         self.opt = torch.optim.Adagrad(self.model.parameters(), lr=self.learning_rate)
@@ -123,7 +127,7 @@ class Experiment:
                 with torch.no_grad():
                     print("validation:")
                     tester = Tester(self.dataset, self.model, "valid", self.model_name)
-                    measure_valid = tester.test()
+                    measure_valid, _ = tester.test()
                     mrr = measure_valid.mrr["fil"]
                     if(mrr > best_mrr):
                         best_mrr = mrr
@@ -133,11 +137,14 @@ class Experiment:
                         self.save_model(it)
 
 
+        if best_model is None:
+            best_model = self.model
+            best_itr = it
         best_model.eval()
         with torch.no_grad():
             print("test in iteration " + str(best_itr) + ":")
             tester = Tester(self.dataset, best_model, "test", self.model_name)
-            self.measure = tester.test()
+            self.measure, self.measure_by_arity = tester.test()
 
         # Save the model at checkpoint
         print("Saving model at {}".format(self.output_dir))
@@ -167,6 +174,13 @@ class Experiment:
             if self.measure is not None:
                 with open(os.path.join(self.output_dir, measure_name), 'w') as f:
                         json.dump(vars(self.measure), f, indent=4, sort_keys=True)
+            if self.measure_by_arity is not None:
+                H = {}
+                measure_by_arity_name = 'measure_{}itr_by_arity.json'.format(itr) if itr else self.model_name+'.json'
+                for key in self.measure_by_arity:
+                    H[key] = vars(self.measure_by_arity[key])
+                with open(os.path.join(self.output_dir, measure_by_arity_name), 'w') as f:
+                        json.dump(H, f, indent=4, sort_keys=True)
 
 
 if __name__ == '__main__':
@@ -184,7 +198,7 @@ if __name__ == '__main__':
     parser.add_argument('-num_iterations', type=int, default=500)
     parser.add_argument('-max_arity', type=int, default=6)
     parser.add_argument("-test", action="store_true")
-    parser.add_argument('-pretrained', type=str, default=None)
+    parser.add_argument('-pretrained', type=str, default=None, help="A path to a trained model, which will be loaded if a value provided.")
     args = parser.parse_args()
 
     dataset = dataset(args.dataset)

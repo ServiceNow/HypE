@@ -14,8 +14,12 @@ class Dataset:
         self.rel2id = {"":0}
         self.data = {}
         self.data["train"] = self.read(self.dir + "train.txt")
-        if(ds_name == "JF17K"):
+        if (ds_name.startswith("JF17K")):
             self.data["test"] = self.read_test(self.dir + "test.txt")
+            # Read the test files by arity
+            for i in range(2,7):
+                test_arity = "test_{}".format(i)
+                self.data[test_arity] = self.read_test(self.dir + test_arity + ".txt")
         else:
             self.data["test"] = self.read(self.dir + "test.txt")
         self.data["valid"] = self.read(self.dir + "valid.txt")

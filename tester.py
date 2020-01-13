@@ -46,6 +46,59 @@ class Tester:
     def test(self):
         settings = ["raw", "fil"]
         normalizer = 0
+
+        # If the dataset is JF17K and we have test data by arity, then
+        # compute test accuracies by arity and show also global result
+        if (self.valid_or_test == 'test' and self.dataset.data.get('test_2', None) is not None):
+            self.measure_by_arity = {}
+            # Iterate over tests sets by arity
+            for i in range(2,7):
+                # Reset the normalizer by arity
+                normalizer_by_arity = 0
+                test_by_arity = "test_{}".format(i)
+                for i, fact in enumerate(self.dataset.data[test_by_arity]):
+                    if i%10 == 0:
+                        print("Testing sample {}".format(i))
+
+                    self.measure_by_arity[test_by_arity] = Measure()
+                    arity = self.dataset.max_arity - (fact == 0).sum()
+                    for j in range(1, arity + 1):
+                        normalizer += 1
+                        normalizer_by_arity += 1
+                        queries = self.create_queries(fact, j)
+                        for raw_or_fil in settings:
+                            r, e1, e2, e3, e4, e5, e6 = self.add_fact_and_shred(fact, queries, raw_or_fil)
+                            if(self.model_name == "HypE"):
+                                ms = np.zeros((len(r),6))
+                                bs = np.ones((len(r), 6))
+
+                                ms[:, 0:arity] = 1
+                                bs[:, 0:arity] = 0
+
+                                ms = torch.tensor(ms).float().to(self.device)
+                                bs = torch.tensor(bs).float().to(self.device)
+                                sim_scores = self.model(r, e1, e2, e3, e4, e5, e6, ms, bs).cpu().data.numpy()
+                            elif(self.model_name == "MTransH"):
+                                ms = np.zeros((len(r),6))
+                                ms[:, 0:arity] = 1
+                                ms = torch.tensor(ms).float().to(self.device)
+                                sim_scores = self.model(r, e1, e2, e3, e4, e5, e6, ms).cpu().data.numpy()
+                            else:
+                                sim_scores = self.model(r, e1, e2, e3, e4, e5, e6).cpu().data.numpy()
+
+                            rank = self.get_rank(sim_scores)
+                            self.measure_by_arity[test_by_arity].update(rank, raw_or_fil)
+                            self.measure_by_arity[test_by_arity].normalize(normalizer)
+                            print("Results for arity {}".format(j))
+                            self.measure_by_arity[test_by_arity].print_()
+            self.measure.normalize(normalizer)
+            print("Results for ALL ARITIES")
+            self.measure.print_()
+        return self.measure, self.measure_by_arity
+
+
+
+        # For datasets other than JF17K, compute valid or test results as usual (all arities)
         for i, fact in enumerate(self.dataset.data[self.valid_or_test]):
             arity = self.dataset.max_arity - (fact == 0).sum()
             for j in range(1, arity + 1):
@@ -76,7 +129,7 @@ class Tester:
         self.measure.normalize(normalizer)
         self.measure.print_()
         #return self.measure.mrr["fil"]
-        return self.measure
+        return self.measure, None
 
 
     def shred_facts(self, tuples):
