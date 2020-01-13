@@ -34,4 +34,4 @@ class Measure:
             print("\tMR =",     self.mr[raw_or_fil])
             print("\tMRR =",    self.mrr[raw_or_fil])
             print("")
-    
+

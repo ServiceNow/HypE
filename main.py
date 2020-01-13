@@ -73,14 +73,11 @@ class Experiment:
         # Load the pretrained model
         if self.pretrained is not None:
             print("Loading the pretrained model at {}".format(self.pretrained))
-            #self.model.load_state_dict(torch.load(self.pretrained))
-            H = torch.load(self.pretrained)
-            print(H['E.weight'].shape)
+            self.model.load_state_dict(torch.load(self.pretrained))
 
 
     def test_and_eval(self):
         print("Testing the {} model on {}...".format(self.model_name, self.dataset.name))
-        self.model.init()
         self.model.eval()
         with torch.no_grad():
             tester = Tester(self.dataset, self.model, "test", self.model_name)

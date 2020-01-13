@@ -21,6 +21,7 @@ class Dataset:
                 test_arity = "test_{}".format(i)
                 self.data[test_arity] = self.read_test(self.dir + test_arity + ".txt")
         else:
+            print("Loading entire test set.")
             self.data["test"] = self.read(self.dir + "test.txt")
         self.data["valid"] = self.read(self.dir + "valid.txt")
         self.batch_index = 0

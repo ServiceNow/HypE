@@ -56,9 +56,11 @@ class Tester:
                 # Reset the normalizer by arity
                 normalizer_by_arity = 0
                 test_by_arity = "test_{}".format(cur_arity)
-                print("************* CUR ARITY {} WITH ROWS {}".format(cur_arity, len(self.dataset.data[test_by_arity])))
+                # print(fact.shape, fact)
+                current_measure = Measure()
+                print("************* Evaluating arity {} having {} samples".format(cur_arity, len(self.dataset.data[test_by_arity])))
                 for i, fact in enumerate(self.dataset.data[test_by_arity]):
-                    self.measure_by_arity[test_by_arity] = Measure()
+                    # self.measure_by_arity[test_by_arity] = Measure()
                     arity = self.dataset.max_arity - (fact == 0).sum()
                     for j in range(1, arity + 1):
                         normalizer += 1
@@ -84,21 +86,25 @@ class Tester:
                             else:
                                 sim_scores = self.model(r, e1, e2, e3, e4, e5, e6).cpu().data.numpy()
 
+                            # Get the rank and update the measures
                             rank = self.get_rank(sim_scores)
-                            self.measure_by_arity[test_by_arity].update(rank, raw_or_fil)
+                            current_measure.update(rank, raw_or_fil)
+                            self.measure.update(rank, raw_or_fil)
 
                     if i%100 == 0:
-                        print("Testing sample {} ---- Hit@10 not normalized {}".format(i, self.measure_by_arity[test_by_arity].hit10))
+                        print("Testing sample {} ---- arity {} for Hit@10 (not normalized) {}".format(i, cur_arity, current_measure.hit10))
 
-                    #print("Hit@10 for arity {} NOT NORMALIZED".format(j), self.measure_by_arity[test_by_arity].hit10)
-                    self.measure_by_arity[test_by_arity].normalize(normalizer_by_arity)
-                    #print("Hit@10 for arity {}".format(j), self.measure_by_arity[test_by_arity].hit10)
+                # Normalize the values for the current arity and save to dict
+                current_measure.normalize(normalizer_by_arity)
+                self.measure_by_arity[test_by_arity] = current_measure
+
+            # Once processing done, compute total
             self.measure.normalize(normalizer)
             print("Results for ALL ARITIES")
             self.measure.print_()
             print("Results by arity")
-            self.measure_by_arity.print_()
-        return self.measure, self.measure_by_arity
+            self.measure_by_arity[test_by_arity].print_()
+            return self.measure, self.measure_by_arity
 
 
 
@@ -130,6 +136,8 @@ class Tester:
 
                     rank = self.get_rank(sim_scores)
                     self.measure.update(rank, raw_or_fil)
+            if i%100 == 0:
+                print("Testing sample {} ---- Hit@10 not normalized {}".format(i, self.measure.hit10))
         self.measure.normalize(normalizer)
         self.measure.print_()
         #return self.measure.mrr["fil"]
