@@ -52,7 +52,7 @@ class Tester:
         if (self.valid_or_test == 'test' and self.dataset.data.get('test_2', None) is not None):
             self.measure_by_arity = {}
             # Iterate over test sets by arity
-            for cur_arity in range(2,self.dataset.max_arity):
+            for cur_arity in range(2,self.dataset.max_arityi+1):
                 # Reset the normalizer by arity
                 test_by_arity = "test_{}".format(cur_arity)
                 # If the dataset does not exit, continue
@@ -110,7 +110,7 @@ class Tester:
             self.measure.print_()
             print("Results by arity")
             for arity in self.measure_by_arity:
-                print("Results for arity {}".format(arity[6:]))
+                print("Results for arity {}".format(arity))
                 self.measure_by_arity[arity].print_()
             return self.measure, self.measure_by_arity
 
