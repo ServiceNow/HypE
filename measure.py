@@ -18,6 +18,8 @@ class Measure:
         self.mrr[raw_or_fil] += (1.0 / rank)
 
     def normalize(self, normalizer):
+        if normalizer == 0:
+            return
         for raw_or_fil in ["raw", "fil"]:
             self.hit1[raw_or_fil]  /= (normalizer)
             self.hit3[raw_or_fil]  /= (normalizer)

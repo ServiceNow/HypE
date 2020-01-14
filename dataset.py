@@ -1,3 +1,4 @@
+import os
 import numpy as np
 import random
 import torch
@@ -17,9 +18,11 @@ class Dataset:
         if (ds_name.startswith("JF17K")):
             self.data["test"] = self.read_test(self.dir + "test.txt")
             # Read the test files by arity
-            for i in range(2,7):
+            for i in range(2,self.max_arity+1):
                 test_arity = "test_{}".format(i)
-                self.data[test_arity] = self.read_test(self.dir + test_arity + ".txt")
+                file_path = self.dir + "test_{}.txt".format(i)
+                if os.path.exists(file_path):
+                    self.data[test_arity] = self.read_test(file_path)
         else:
             print("Loading entire test set.")
             self.data["test"] = self.read(self.dir + "test.txt")

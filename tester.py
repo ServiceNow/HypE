@@ -51,12 +51,17 @@ class Tester:
         # compute test accuracies by arity and show also global result
         if (self.valid_or_test == 'test' and self.dataset.data.get('test_2', None) is not None):
             self.measure_by_arity = {}
-            # Iterate over tests sets by arity
-            for cur_arity in range(2,7):
+            # Iterate over test sets by arity
+            for cur_arity in range(2,self.dataset.max_arity):
                 # Reset the normalizer by arity
-                normalizer_by_arity = 0
                 test_by_arity = "test_{}".format(cur_arity)
-                # print(fact.shape, fact)
+                # If the dataset does not exit, continue
+                if not (test_by_arity in vars(self.dataset)['data'].keys()):
+                    print("{} does not exist. Skipping".format(test_by_arity))
+                    continue
+
+                # Reset normalization parameter
+                normalizer_by_arity = 0
                 current_measure = Measure()
                 print("************* Evaluating arity {} having {} samples".format(cur_arity, len(self.dataset.data[test_by_arity])))
                 for i, fact in enumerate(self.dataset.data[test_by_arity]):
@@ -91,11 +96,12 @@ class Tester:
                             current_measure.update(rank, raw_or_fil)
                             self.measure.update(rank, raw_or_fil)
 
-                    if i%100 == 0:
+                    if i%1000 == 0:
                         print("Testing sample {} ---- arity {} for Hit@10 (not normalized) {}".format(i, cur_arity, current_measure.hit10))
 
                 # Normalize the values for the current arity and save to dict
                 current_measure.normalize(normalizer_by_arity)
+                print("==== Arity {}, Normalized Hit@10 {}".format(cur_arity, current_measure.hit10))
                 self.measure_by_arity[test_by_arity] = current_measure
 
             # Once processing done, compute total
@@ -103,7 +109,9 @@ class Tester:
             print("Results for ALL ARITIES")
             self.measure.print_()
             print("Results by arity")
-            self.measure_by_arity[test_by_arity].print_()
+            for arity in self.measure_by_arity:
+                print("Results for arity {}".format(arity[6:]))
+                self.measure_by_arity[arity].print_()
             return self.measure, self.measure_by_arity
 
 

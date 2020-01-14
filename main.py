@@ -184,7 +184,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('-model', type=str, default="HSimplE")
     parser.add_argument('-dataset', type=str, default="JF17K")
-    parser.add_argument('-lr', type=float)
+    parser.add_argument('-lr', type=float, default=0.01)
     parser.add_argument('-nr', type=int, default=10)
     parser.add_argument('-out_channels', type=int, default=2)
     parser.add_argument('-filt_w', type=int, default=2)
