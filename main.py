@@ -95,6 +95,7 @@ class Experiment:
         loss_layer = torch.nn.CrossEntropyLoss()
         print("Starting training...")
         best_mrr = 0
+        #for it in range(1, self.num_iterations+1):
         for it in range(1, self.num_iterations+1):
             last_batch = False
             self.model.train()
@@ -129,17 +130,17 @@ class Experiment:
                     if(mrr > best_mrr):
                         best_mrr = mrr
                         best_model = self.model
-                        best_itr = it
+                        self.best_itr = it
                         # Save the model at checkpoint
                         self.save_model(it)
 
 
         if best_model is None:
             best_model = self.model
-            best_itr = it
+            self.best_itr = it
         best_model.eval()
         with torch.no_grad():
-            print("test in iteration " + str(best_itr) + ":")
+            print("test in iteration " + str(self.best_itr) + ":")
             tester = Tester(self.dataset, best_model, "test", self.model_name)
             self.measure, self.measure_by_arity = tester.test()
 
@@ -169,8 +170,10 @@ class Experiment:
             torch.save(self.model.state_dict(), os.path.join(self.output_dir, model_name))
             torch.save(self.opt.state_dict(), os.path.join(self.output_dir, opt_name))
             if self.measure is not None:
+                measure_dict = vars(self.measure)
+                measure_dict["best_iteration"] = self.best_itr
                 with open(os.path.join(self.output_dir, measure_name), 'w') as f:
-                        json.dump(vars(self.measure), f, indent=4, sort_keys=True)
+                        json.dump(measure_dict, f, indent=4, sort_keys=True)
             if self.measure_by_arity is not None:
                 H = {}
                 measure_by_arity_name = 'measure_{}itr_by_arity.json'.format(itr) if itr else self.model_name+'.json'

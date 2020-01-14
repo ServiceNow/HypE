@@ -15,6 +15,8 @@ class Dataset:
         self.rel2id = {"":0}
         self.data = {}
         self.data["train"] = self.read(self.dir + "train.txt")
+        # Shuffle the train set
+        np.random.shuffle(self.data['train'])
         if (ds_name.startswith("JF17K")):
             self.data["test"] = self.read_test(self.dir + "test.txt")
             # Read the test files by arity
@@ -84,6 +86,9 @@ class Dataset:
             self.batch_index += batch_size
         else:
             batch = self.data["train"][self.batch_index:]
+            ###shuffle##
+            print("SSSSSSSSSSS Shuffling the data SSSSSSSSSSSSS")
+            np.random.shuffle(self.data['train'])
             self.batch_index = 0
         batch = np.append(batch, np.zeros((len(batch), 1)), axis=1).astype("int") #appending the +1 label
         batch = np.append(batch, np.zeros((len(batch), 1)), axis=1).astype("int") #appending the 0 arity
@@ -92,7 +97,7 @@ class Dataset:
     def next_batch(self, batch_size, neg_ratio, device):
 
         pos_batch = self.next_pos_batch(batch_size)
-        np.random.shuffle(pos_batch)
+        #np.random.shuffle(pos_batch)
         batch = self.generate_neg(pos_batch, neg_ratio)
 
         arities = batch[:,8]
