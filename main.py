@@ -196,13 +196,14 @@ if __name__ == '__main__':
     parser.add_argument('-input_drop', type=float, default=0.2)
     parser.add_argument('-stride', type=int, default=2)
     parser.add_argument('-num_iterations', type=int, default=500)
+    parser.add_argument('-batch_size', type=int, default=128)
     parser.add_argument('-max_arity', type=int, default=6)
     parser.add_argument("-test", action="store_true")
     parser.add_argument('-pretrained', type=str, default=None, help="A path to a trained model, which will be loaded if a value provided.")
     args = parser.parse_args()
 
     dataset = dataset(args.dataset)
-    experiment = Experiment(args.model, dataset, args.num_iterations, batch_size=128, learning_rate=args.lr,
+    experiment = Experiment(args.model, dataset, args.num_iterations, batch_size=args.batch_size, learning_rate=args.lr,
                             emb_dim=args.emb_dim, max_arity=args.max_arity, hidden_drop=args.hidden_drop,
                             input_drop=args.input_drop, neg_ratio=args.nr, in_channels=1, out_channels=args.out_channels,
                             filt_h=1, filt_w=args.filt_w, stride=args.stride, pretrained=args.pretrained)

@@ -6,6 +6,21 @@ class Measure:
         self.mrr   = {"raw": 0.0, "fil": 0.0}
         self.mr    = {"raw": 0.0, "fil": 0.0}
 
+    def __add__(self, other):
+        """
+        Adding two measure objects
+        """
+        new_measure = Measure()
+        settings = ["raw", "fil"]
+
+        for rf in settings:
+            new_measure.hit1[rf] = (self.hit1[rf] + other.hit1[rf])
+            new_measure.hit3[rf] = (self.hit3[rf] + other.hit3[rf])
+            new_measure.hit10[rf] = (self.hit10[rf] + other.hit10[rf])
+            new_measure.mrr[rf] = (self.mrr[rf] + other.mrr[rf])
+            new_measure.mr[rf] = (self.mr[rf] + other.mr[rf])
+        return new_measure
+
     def update(self, rank, raw_or_fil):
         if rank == 1:
             self.hit1[raw_or_fil] += 1.0

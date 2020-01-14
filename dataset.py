@@ -87,7 +87,6 @@ class Dataset:
         else:
             batch = self.data["train"][self.batch_index:]
             ###shuffle##
-            print("SSSSSSSSSSS Shuffling the data SSSSSSSSSSSSS")
             np.random.shuffle(self.data['train'])
             self.batch_index = 0
         batch = np.append(batch, np.zeros((len(batch), 1)), axis=1).astype("int") #appending the +1 label
