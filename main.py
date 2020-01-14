@@ -81,7 +81,9 @@ class Experiment:
         self.model.eval()
         with torch.no_grad():
             tester = Tester(self.dataset, self.model, "test", self.model_name)
-            self.measure, self.measure_by_arity = tester.test()
+            test_by_arity = self.dataset.name.startswith('JF17K')
+            print("STARTS WITH", test_by_arity, self.model_name, self.dataset.name.startswith('JF17K'))
+            self.measure, self.measure_by_arity = tester.test(test_by_arity)
 
 
     def train_and_eval(self):
@@ -142,7 +144,8 @@ class Experiment:
         with torch.no_grad():
             print("test in iteration " + str(self.best_itr) + ":")
             tester = Tester(self.dataset, best_model, "test", self.model_name)
-            self.measure, self.measure_by_arity = tester.test()
+            test_by_arity = self.dataset.name.startswith('JF17K')
+            self.measure, self.measure_by_arity = tester.test(test_by_arity)
 
         # Save the model at checkpoint
         print("Saving model at {}".format(self.output_dir))
