@@ -7,8 +7,8 @@ This is the implementation of the model proposed in Knowledge Hypergraphs: Exten
 ## Dependencies
 
 * `Python` version 3.6.6
-* `Numpy` version 1.16.2
-* `PyTorch` version 0.4.0
+* `Numpy` version 1.16.4
+* `PyTorch` version 1.1.0
 
 ## Usage
 
