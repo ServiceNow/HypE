@@ -74,7 +74,7 @@ class Experiment:
                 last_batch = self.dataset.was_last_batch()
                 opt.zero_grad()
                 number_of_positive = len(np.where(targets > 0)[0])
-                if(self.model_name == "HypE" or self.model_name == "HypE_DM"):
+                if(self.model_name == "HypE"):
                     predictions = model.forward(r, e1, e2, e3, e4, e5, e6, ms, bs)
                 elif(self.model_name == "MTransH"):
                     predictions = model.forward(r, e1, e2, e3, e4, e5, e6, ms)
@@ -110,7 +110,7 @@ class Experiment:
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument('-model', type=str, default="HypE_DM")
+    parser.add_argument('-model', type=str, default="HypE")
     parser.add_argument('-dataset', type=str, default="JF17K")
     parser.add_argument('-lr', type=float)
     parser.add_argument('-nr', type=int, default=10)
