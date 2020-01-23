@@ -8,7 +8,7 @@ class Measure:
 
     def __add__(self, other):
         """
-        Adding two measure objects
+        Add two measure objects
         """
         new_measure = Measure()
         settings = ["raw", "fil"]
@@ -20,6 +20,16 @@ class Measure:
             new_measure.mrr[rf] = (self.mrr[rf] + other.mrr[rf])
             new_measure.mr[rf] = (self.mr[rf] + other.mr[rf])
         return new_measure
+
+    def __str__(self):
+        for raw_or_fil in ["raw", "fil"]:
+            print("{} setting:".format(raw_or_fil.title()))
+            print("\tHit@1  = {}".format(self.hit1[raw_or_fil]))
+            print("\tHit@3  = {}".format(self.hit3[raw_or_fil]))
+            print("\tHit@10 = {}".format(self.hit10[raw_or_fil]))
+            print("\tMR  = {}".format(self.mr[raw_or_fil]))
+            print("\tMRR = {}".format(self.mrr[raw_or_fil]))
+            print("")
 
     def update(self, rank, raw_or_fil):
         if rank == 1:
@@ -41,14 +51,3 @@ class Measure:
             self.hit10[raw_or_fil] /= (normalizer)
             self.mr[raw_or_fil]    /= (normalizer)
             self.mrr[raw_or_fil]   /= (normalizer)
-
-    def print_(self):
-        for raw_or_fil in ["raw", "fil"]:
-            print(raw_or_fil.title() + " setting:")
-            print("\tHit@1 =",  self.hit1[raw_or_fil])
-            print("\tHit@3 =",  self.hit3[raw_or_fil])
-            print("\tHit@10 =", self.hit10[raw_or_fil])
-            print("\tMR =",     self.mr[raw_or_fil])
-            print("\tMRR =",    self.mrr[raw_or_fil])
-            print("")
-

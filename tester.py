@@ -82,18 +82,22 @@ class Tester:
             current_measure, normalizer =  self.eval_dataset(self.dataset.data[self.valid_or_test])
             self.measure = current_measure
 
+        # If no samples were evaluated, exit with an error
+        if normalizer == 0:
+            raise Exception("No Samples were evaluated! Check your test or validation data!!")
+
         self.measure.normalize(normalizer)
 
         for arity in self.measure_by_arity:
             print("Results for arity {}".format(arity[5:]))
-            self.measure_by_arity[arity].print_()
+            print(self.measure_by_arity[arity])
         print("Results for ALL ARITIES in {} set".format(self.valid_or_test))
-        self.measure.print_()
+        print(self.measure)
         return self.measure, self.measure_by_arity
 
     def eval_dataset(self, dataset):
         """
-        Evaluate the given dataset with the given model.
+        Evaluate the dataset with the given model.
         """
         # Reset normalization parameter
         settings = ["raw", "fil"]
@@ -107,7 +111,7 @@ class Tester:
                 queries = self.create_queries(fact, j)
                 for raw_or_fil in settings:
                     r, e1, e2, e3, e4, e5, e6 = self.add_fact_and_shred(fact, queries, raw_or_fil)
-                    if(self.model_name == "HypE"):
+                    if (self.model_name == "HypE"):
                         ms = np.zeros((len(r),6))
                         bs = np.ones((len(r), 6))
 
@@ -117,7 +121,7 @@ class Tester:
                         ms = torch.tensor(ms).float().to(self.device)
                         bs = torch.tensor(bs).float().to(self.device)
                         sim_scores = self.model(r, e1, e2, e3, e4, e5, e6, ms, bs).cpu().data.numpy()
-                    elif(self.model_name == "MTransH"):
+                    elif (self.model_name == "MTransH"):
                         ms = np.zeros((len(r),6))
                         ms[:, 0:arity] = 1
                         ms = torch.tensor(ms).float().to(self.device)
@@ -130,7 +134,7 @@ class Tester:
                     current_rank.update(rank, raw_or_fil)
                     # self.measure.update(rank, raw_or_fil)
 
-            if i%1000 == 0:
+            if i % 1000 == 0:
                 print("--- Testing sample {}".format(i))
 
         return current_rank, normalizer
@@ -151,5 +155,3 @@ class Tester:
             for fact in self.dataset.data[spl]:
                 tuples.append(tuple(fact))
         return tuples
-
-

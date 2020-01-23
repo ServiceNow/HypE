@@ -1,3 +1,10 @@
+'''
+**************************************************************************
+The models here are designed to work with datasets having maximum arity 6.
+**************************************************************************
+'''
+
+
 import numpy as np
 import torch
 from torch.nn import functional as F, Parameter
@@ -36,7 +43,7 @@ class MDistMult(torch.nn.Module):
 
 class MCP(torch.nn.Module):
     def __init__(self, dataset, emb_dim, **kwargs):
-        super(MPD, self).__init__()
+        super(MCP, self).__init__()
         self.emb_dim = emb_dim
         self.E1 = torch.nn.Embedding(dataset.num_ent(), emb_dim, padding_idx=0)
         self.E2 = torch.nn.Embedding(dataset.num_ent(), emb_dim, padding_idx=0)
@@ -79,10 +86,10 @@ class MCP(torch.nn.Module):
         return x
 
 class HSimplE(torch.nn.Module):
-    def __init__(self, dataset, emb_dim, max_arity=6, **kwargs):
+    def __init__(self, dataset, emb_dim, **kwargs):
         super(HSimplE, self).__init__()
         self.emb_dim = emb_dim
-        self.max_arity = max_arity
+        self.max_arity = 6
         self.E = torch.nn.Embedding(dataset.num_ent(), emb_dim, padding_idx=0)
         self.R = torch.nn.Embedding(dataset.num_rel(), emb_dim, padding_idx=0)
         self.hidden_drop_rate = kwargs["hidden_drop"]
@@ -106,9 +113,7 @@ class HSimplE(torch.nn.Module):
         e4 = self.shift(self.E(e4_idx), int(3 * self.emb_dim/self.max_arity))
         e5 = self.shift(self.E(e5_idx), int(4 * self.emb_dim/self.max_arity))
         e6 = self.shift(self.E(e6_idx), int(5 * self.emb_dim/self.max_arity))
-        x = r * e1 * e2 * e3 * e4 * e5
-        if self.max_arity == 6:
-            x = x * e6
+        x = r * e1 * e2 * e3 * e4 * e5 * e6
         x = self.hidden_drop(x)
         x = torch.sum(x, dim=1)
         return x
@@ -123,7 +128,7 @@ class HypE(torch.nn.Module):
         self.stride = kwargs["stride"]
         self.hidden_drop_rate = kwargs["hidden_drop"]
         self.emb_dim = emb_dim
-        self.max_arity = 7
+        self.max_arity = 6
         rel_emb_dim = emb_dim
         self.E = torch.nn.Embedding(d.num_ent(), emb_dim, padding_idx=0)
         self.R = torch.nn.Embedding(d.num_rel(), rel_emb_dim, padding_idx=0)
@@ -142,8 +147,8 @@ class HypE(torch.nn.Module):
         # size of the convolution filters outputted by the hypernetwork
         fc1_length = self.in_channels*self.out_channels*self.filt_h*self.filt_w
         # Hypernetwork
-        self.fc1 = torch.nn.Linear(rel_emb_dim + self.max_arity, fc1_length)
-        self.fc2 = torch.nn.Linear(self.max_arity, fc1_length)
+        self.fc1 = torch.nn.Linear(rel_emb_dim + self.max_arity + 1, fc1_length)
+        self.fc2 = torch.nn.Linear(self.max_arity + 1, fc1_length)
 
 
     def init(self):
@@ -158,8 +163,8 @@ class HypE(torch.nn.Module):
         r = self.R(r_idx)
         x = e
         x = self.inp_drop(x)
-        one_hot_target = (pos == torch.arange(self.max_arity).reshape(self.max_arity)).float().to(self.device)
-        poses = one_hot_target.repeat(r.shape[0]).view(-1, self.max_arity)
+        one_hot_target = (pos == torch.arange(self.max_arity + 1).reshape(self.max_arity + 1)).float().to(self.device)
+        poses = one_hot_target.repeat(r.shape[0]).view(-1, self.max_arity + 1)
         one_hot_target.requires_grad = False
         poses.requires_grad = False
         k = self.fc2(poses)

@@ -7,28 +7,29 @@ import math
 class Dataset:
     def __init__(self, ds_name):
         self.name = ds_name
-        self.dir = "data/" + ds_name + "/"
+        self.dir = os.path.join("data", ds_name)
         # THIS NEEDS TO STAY 6
         self.max_arity = 6
         # id zero means no entity. Entity ids start from 1.
         self.ent2id = {"":0}
         self.rel2id = {"":0}
         self.data = {}
-        self.data["train"] = self.read(self.dir + "train.txt")
+        self.data["train"] = self.read(os.path.join(self.dir, "train.txt"))
         # Shuffle the train set
         np.random.shuffle(self.data['train'])
-        if (ds_name.startswith("JF17K")):
-            self.data["test"] = self.read_test(self.dir + "test.txt")
-            # Read the test files by arity
-            for i in range(2,self.max_arity+1):
-                test_arity = "test_{}".format(i)
-                file_path = self.dir + "test_{}.txt".format(i)
-                if os.path.exists(file_path):
-                    self.data[test_arity] = self.read_test(file_path)
-        else:
-            print("Loading entire test set.")
-            self.data["test"] = self.read(self.dir + "test.txt")
-        self.data["valid"] = self.read(self.dir + "valid.txt")
+
+        test_dir = os.path.join(self.dir, "test.txt")
+        if os.path.exists(test_dir):
+            self.data["test"] = self.read_test(test_dir)
+
+        # Read the test files by arity, if they exist
+        # If they do, then test output will be displayed by arity
+        for i in range(2,self.max_arity+1):
+            test_arity = "test_{}".format(i)
+            file_path = os.path.join(self.dir, "test_{}.txt".format(i))
+            if os.path.exists(file_path):
+                self.data[test_arity] = self.read_test(file_path)
+        self.data["valid"] = self.read(os.path.exists(os.path.join(self.dir, "valid.txt")))
         self.batch_index = 0
 
     def read(self, file_path):
@@ -96,7 +97,6 @@ class Dataset:
     def next_batch(self, batch_size, neg_ratio, device):
 
         pos_batch = self.next_pos_batch(batch_size)
-        #np.random.shuffle(pos_batch)
         batch = self.generate_neg(pos_batch, neg_ratio)
 
         arities = batch[:,8]
