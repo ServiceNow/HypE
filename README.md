@@ -18,7 +18,7 @@ We recommend running the code inside a `Docker` container.
 To do so, you will first need to have [Docker installed](https://docs.docker.com/).
 You can then compile the image with:
 ```console
-docker build -t hype-image:latest --build-arg UID=$(id -u `whoami`) --build-arg USER=`whoami` .
+docker build -t hype-image:latest  .
 ```
 
 and run using (replace the path to your local repo):
@@ -82,7 +82,7 @@ python main.py -model HSimplE -dataset JF17K -pretrained output/my_pretrained_mo
 The baselines implemented in this package are `m-DistMult`, `m-CP`, and `m-TransH`. You can train them by running the following:
 
 ```console
-python main.py -model HTransH -dataset JF17K -num_iterations 1000 -batch_size 128 -lr 0.06 -emb_dim 200 -nr 10
+python main.py -model MTransH -dataset JF17K -num_iterations 1000 -batch_size 128 -lr 0.06 -emb_dim 200 -nr 10
 ```
 ```console
 python main.py -model MCP -dataset JF17K -num_iterations 1000 -batch_size 128 -lr 0.02 -emb_dim 34 -nr 10
