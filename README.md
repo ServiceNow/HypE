@@ -4,7 +4,10 @@ Summary
 
 This repo contains the implementation of the model proposed in `Knowledge Hypergraphs: Extending Knowledge Graphs Beyond Binary Relations` for knowledge hypergraph embedding, as well as the code for most of the baselines in the paper. 
 The code can be also used to train a `HypE` models for any input graph. 
-_Note however that the code is designed to handle graphs with arity at most 6._
+
+
+_Note however that the code is designed to handle graphs with arity at most 6 (which is the case for JF17K)._
+
 The software can be also used as a framework to implement new knowledge hypergraph embedding models.
 
 ## Dependencies

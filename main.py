@@ -6,7 +6,7 @@ import torch
 from torch.nn import functional as F
 from models import *
 import argparse
-from dataset import Dataset as dataset
+from dataset import Dataset
 from tester import Tester
 import math
 
@@ -237,7 +237,9 @@ if __name__ == '__main__':
     parser.add_argument('-pretrained', type=str, default=None, help="A path to a trained model, which will be loaded if provided.")
     args = parser.parse_args()
 
-    dataset = dataset(args.dataset)
+    # Load the dataset
+    dataset = Dataset(args.dataset, DEFAULT_MAX_ARITY)
+
     experiment = Experiment(args.model, dataset, args.num_iterations, batch_size=args.batch_size, learning_rate=args.lr,
                             emb_dim=args.emb_dim, max_arity=DEFAULT_MAX_ARITY, hidden_drop=args.hidden_drop,
                             input_drop=args.input_drop, neg_ratio=args.nr, in_channels=args.in_channels, out_channels=args.out_channels,

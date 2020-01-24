@@ -5,11 +5,11 @@ import torch
 import math
 
 class Dataset:
-    def __init__(self, ds_name):
+    def __init__(self, ds_name, max_arity=6):
         self.name = ds_name
         self.dir = os.path.join("data", ds_name)
         # THIS NEEDS TO STAY 6
-        self.max_arity = 6
+        self.max_arity = max_arity
         # id zero means no entity. Entity ids start from 1.
         self.ent2id = {"":0}
         self.rel2id = {"":0}
