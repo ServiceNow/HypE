@@ -245,8 +245,9 @@ def _truncate_seq_pair(tokens_a, tokens_b, max_length):
         sum_b = sum([len(t) for t in tokens_b])
         total_length = sum_a + sum_b
         if total_length <= max_length:
-            logger.warning("Total tokens is execeeding max token length. This should not happen.")
             break
+        else:
+            logger.warning("Total tokens is execeeding max token length. This should not happen.")
         if len(sum_a) > len(sum_b):
             tokens_a[-1].pop()
         else:
