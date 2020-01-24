@@ -12,7 +12,13 @@ from torch.nn.init import xavier_normal_, xavier_uniform_
 import time
 import math
 
-class MDistMult(torch.nn.Module):
+class BaseClass(torch.nn.Module):
+    def __init__(self):
+        super(BaseClass, self).__init__()
+        self.cur_itr = torch.nn.Parameter(torch.tensor(0, dtype=torch.int32), requires_grad=False)
+
+
+class MDistMult(BaseClass):
     def __init__(self, dataset, emb_dim, **kwargs):
         super(MDistMult, self).__init__()
         self.emb_dim = emb_dim
@@ -41,7 +47,7 @@ class MDistMult(torch.nn.Module):
         x = torch.sum(x, dim=1)
         return x
 
-class MCP(torch.nn.Module):
+class MCP(BaseClass):
     def __init__(self, dataset, emb_dim, **kwargs):
         super(MCP, self).__init__()
         self.emb_dim = emb_dim
@@ -85,7 +91,7 @@ class MCP(torch.nn.Module):
         x = torch.sum(x, dim=1)
         return x
 
-class HSimplE(torch.nn.Module):
+class HSimplE(BaseClass):
     def __init__(self, dataset, emb_dim, **kwargs):
         super(HSimplE, self).__init__()
         self.emb_dim = emb_dim
@@ -100,6 +106,7 @@ class HSimplE(torch.nn.Module):
         self.E.weight.data[0] = torch.ones(self.emb_dim)
         xavier_normal_(self.E.weight.data[1:])
         xavier_normal_(self.R.weight.data)
+
 
     def shift(self, v, sh):
         y = torch.cat((v[:, sh:], v[:, :sh]), dim=1)
@@ -118,9 +125,10 @@ class HSimplE(torch.nn.Module):
         x = torch.sum(x, dim=1)
         return x
 
-class HypE(torch.nn.Module):
+class HypE(BaseClass):
     def __init__(self, d, emb_dim, **kwargs):
         super(HypE, self).__init__()
+        self.cur_itr = torch.nn.Parameter(torch.tensor(0, dtype=torch.int32), requires_grad=False)
         self.in_channels = kwargs["in_channels"]
         self.out_channels = kwargs["out_channels"]
         self.filt_h = kwargs["filt_h"]
@@ -195,7 +203,7 @@ class HypE(torch.nn.Module):
         return x
 
 
-class MTransH(torch.nn.Module):
+class MTransH(BaseClass):
     def __init__(self, dataset, emb_dim, **kwargs):
         super(MTransH, self).__init__()
         self.emb_dim = emb_dim

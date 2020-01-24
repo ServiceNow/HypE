@@ -23,32 +23,42 @@ docker build -t hype-image:latest --build-arg UID=$(id -u `whoami`) --build-arg 
 
 and run using (replace the path to your local repo):
 ```console
-docker run --rm -it -v {HypE-code-path}:/eai/project hype-image /bin/bash
+docker run --rm -it -v {HypE-code-path}:/eai/project --user `id -u`:`id -g` hype-image /bin/bash
 ```
 
 ## Usage
 
-To train HypE or any of the baselines you should define the following parameters:
+To train HypE or any of the baselines you should define the parameters relevant to the given model.
+The default values for most of these parameters are the ones that were used to obtain the results in the paper.
 
-`model`: name of the model
+- `model`: The name of the model. Valid options are `HypE`, `HSimplE`, `MTransH`, `DistMult`, `MCP`.
 
-`dataset`: The dataset you want to run this model on
+- `dataset`: The dataset you want to run this model on (`JF17K` is included in this repo).
 
-`lr`: learning rate
+- `batch_size`: The training batch size.
 
-`nr`: number of negative examples per positive example per arity
+- `num_iterations`: The total number of training iterations.
 
-`out_channels`: number of out channels for convolution filters in HypE
+- `lr`: The learning rate.
 
-`filt_w`: width of convolutional weight filters in HypE
+- `nr`: number of negative examples per positive example for each arity.
 
-`stride`: stride of convolutional weight filters in HypE
+- `out_channels`: number of out channels for convolution filters in HypE.
 
-`emb_dim`: embedding dimension
+- `filt_w`: width of convolutional weight filters in HypE.
 
-`input_drop`: drop out rate for input layer of all models
+- `stride`: stride of convolutional weight filters in HypE.
 
-`hidden_drop`: drop out rate for hidden layer of all models
+- `emb_dim`: embedding dimension.
+
+- `input_drop`: drop out rate for input layer of all models.
+
+- `hidden_drop`: drop out rate for hidden layer of all models.
+
+- `test`: when set, this will test a trained model on the test dataset. If this option is present, then you must specify the path to a trained model using `-pretrained` argument.
+
+- `pretrained`: The path to a pretrained model file. If this path exists, then the code will load a pretrained model before starting the train or test process.
+The filename is expected to have the form `model_*.chkpnt`. The directory containing this file is expected to also contain the optimizer as `opt_*.chkpnt`, since it will also be loaded. 
 
 
 ## Training `HypE` and `HSimplE` 

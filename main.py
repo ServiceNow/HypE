@@ -10,8 +10,8 @@ from dataset import Dataset as dataset
 from tester import Tester
 import math
 
-SAVE_DIR = 'output'
-MAX_ARITY = 6
+DEFAULT_SAVE_DIR = 'output'
+DEFAULT_MAX_ARITY = 6
 
 class Experiment:
 
@@ -20,7 +20,6 @@ class Experiment:
         self.model_name = model_name
         self.learning_rate = learning_rate
         self.emb_dim = emb_dim
-        self.num_iterations = num_iterations
         self.batch_size = batch_size
         self.neg_ratio = neg_ratio
         self.max_arity = max_arity
@@ -31,12 +30,16 @@ class Experiment:
                        "hidden_drop": hidden_drop, "stride": stride, "input_drop":input_drop}
         self.hyperpars = {"model": model_name,"lr":learning_rate,"emb_dim":emb_dim,"out_channels":out_channels,
                           "filt_w":filt_w,"nr":neg_ratio,"stride":stride, "hidden_drop":hidden_drop, "input_drop":input_drop}
+
+
+        self.num_iterations = num_iterations
         self.stride = stride
-        self.output_dir = self.create_output_dir()
+        # Create an output dir unless a pretrained directory is given
+        self.output_dir = self.create_output_dir(pretrained)
         self.measure = None
         self.measure_by_arity = None
         self.test_by_arity = not no_test_by_arity
-        # Load the right model
+        # Load the specified model and initialize based on given checkpoint (if any)
         self.load_model()
 
     def decompose_predictions(self, targets, predictions, max_length):
@@ -75,9 +78,21 @@ class Experiment:
             raise Exception("!!!! No mode called {} found !!!!".format(self.model_name))
 
         # Load the pretrained model
+        self.opt = torch.optim.Adagrad(self.model.parameters(), lr=self.learning_rate)
         if self.pretrained is not None:
             print("Loading the pretrained model at {}".format(self.pretrained))
             self.model.load_state_dict(torch.load(self.pretrained))
+            # Construct the name of the optimizer file based on the pretrained model path
+            opt_path = os.path.join(os.path.dirname(self.pretrained), os.path.basename(self.pretrained).replace('model','opt'))
+            # If an optimizer exists (needed for training, but not testing), then load it.
+            if os.path.exists(opt_path):
+                self.opt.load_state_dict(torch.load(opt_path))
+            else:
+                print("*** NO OPTIMIZER FOUND. SKIPPING. ****")
+
+        else:
+            # Initilize the model
+            self.model.init()
 
 
     def test_and_eval(self):
@@ -89,20 +104,26 @@ class Experiment:
 
 
     def train_and_eval(self):
+        # If the number of iterations is the same as the current iteration, exit.
+        if (self.model.cur_itr.data >= self.num_iterations):
+            print("*************")
+            print("Number of iterations is the same as that in the pretrained model.")
+            print("Nothing left to train. Exiting.")
+            print("*************")
+            return
+
         print("Training the {} model...".format(self.model_name))
         print("Number of training data points: {}".format(len(self.dataset.data["train"])))
 
         best_model = None
-        self.model.init()
 
-        self.opt = torch.optim.Adagrad(self.model.parameters(), lr=self.learning_rate)
         loss_layer = torch.nn.CrossEntropyLoss()
         print("Starting training...")
         best_mrr = 0
-        #for it in range(1, self.num_iterations+1):
-        for it in range(1, self.num_iterations+1):
+        for it in range(self.model.cur_itr.data, self.num_iterations+1):
             last_batch = False
             self.model.train()
+            self.model.cur_itr.data += 1
             losses = 0
             while not last_batch:
                 r, e1, e2, e3, e4, e5, e6, targets, ms, bs = self.dataset.next_batch(self.batch_size, neg_ratio=self.neg_ratio, device=self.device)
@@ -122,7 +143,7 @@ class Experiment:
                 self.opt.step()
                 losses += loss.item()
 
-            print("iteration#: {}, loss: {}".format(it, losses))
+            print("Iteration#: {}, loss: {}".format(it, losses))
 
             if(it % 100 == 0):
                 self.model.eval()
@@ -154,10 +175,15 @@ class Experiment:
 
 
     def create_output_dir(self, output_dir=None):
+        """
+        If an output dir is given, then make sure it exists. Otherwise, create one based on time stamp.
+        """
         if output_dir is None:
             time = datetime.datetime.now()
             model_name = '{}_{}_{}'.format(self.model_name, self.dataset.name, time.strftime("%Y%m%d-%H%M%S"))
-            output_dir = os.path.join(SAVE_DIR, self.model_name, model_name)
+            output_dir = os.path.join(DEFAULT_SAVE_DIR, self.model_name, model_name)
+        else:
+            output_dir = os.path.dirname(self.pretrained)
 
         if not os.path.exists(output_dir):
             os.makedirs(output_dir)
@@ -171,6 +197,7 @@ class Experiment:
             model_name = 'model_{}itr.chkpnt'.format(itr) if itr else self.model_name+'.chkpnt'
             opt_name = 'opt_{}itr.chkpnt'.format(itr) if itr else self.model_name+'.chkpnt'
             measure_name = '{}_measure_{}itr.json'.format(test_or_valid, itr) if itr else '{}.json'.format(self.model_name)
+
             torch.save(self.model.state_dict(), os.path.join(self.output_dir, model_name))
             torch.save(self.opt.state_dict(), os.path.join(self.output_dir, opt_name))
             if self.measure is not None:
@@ -179,7 +206,7 @@ class Experiment:
                 with open(os.path.join(self.output_dir, measure_name), 'w') as f:
                         json.dump(measure_dict, f, indent=4, sort_keys=True)
             # Note that measure_by_arity is only computed at test time (not validation)
-            if self.measure_by_arity is not None:
+            if (self.test_by_arity) and (self.measure_by_arity is not None):
                 H = {}
                 H["best_iteration"] = self.best_itr
                 measure_by_arity_name = '{}_measure_{}itr_by_arity.json'.format(test_or_valid, itr) if itr else '{}.json'.format(self.model_name)
@@ -206,18 +233,20 @@ if __name__ == '__main__':
     parser.add_argument('-num_iterations', type=int, default=1000)
     parser.add_argument('-batch_size', type=int, default=128)
     parser.add_argument("-test", action="store_true")
-    parser.add_argument("-no_test_by_arity", action="store_false")
+    parser.add_argument("-no_test_by_arity", action="store_true")
     parser.add_argument('-pretrained', type=str, default=None, help="A path to a trained model, which will be loaded if provided.")
     args = parser.parse_args()
 
     dataset = dataset(args.dataset)
     experiment = Experiment(args.model, dataset, args.num_iterations, batch_size=args.batch_size, learning_rate=args.lr,
-                            emb_dim=args.emb_dim, max_arity=MAX_ARITY, hidden_drop=args.hidden_drop,
+                            emb_dim=args.emb_dim, max_arity=DEFAULT_MAX_ARITY, hidden_drop=args.hidden_drop,
                             input_drop=args.input_drop, neg_ratio=args.nr, in_channels=args.in_channels, out_channels=args.out_channels,
                             filt_h=args.filt_h, filt_w=args.filt_w, stride=args.stride, pretrained=args.pretrained, no_test_by_arity=args.no_test_by_arity)
 
     if args.test:
         print("************** START OF TESTING ********************", experiment.model_name)
+        if args.pretrained is None:
+            raise Exception("You must provide a trained model to test!")
         experiment.test_and_eval()
     else:
         print("************** START OF TRAINING ********************", experiment.model_name)

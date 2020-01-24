@@ -16,7 +16,8 @@ class Tester:
         self.measure = Measure()
         self.all_facts_as_set_of_tuples = set(self.allFactsAsTuples())
 
-    def get_rank(self, sim_scores):#assuming the test fact is the first one
+    def get_rank(self, sim_scores):
+        # Assumes the test fact is the first one
         return (sim_scores >= sim_scores[0]).sum()
 
     def create_queries(self, fact, position):
@@ -61,8 +62,8 @@ class Tester:
                 # Reset the normalizer by arity
                 test_by_arity = "test_{}".format(cur_arity)
                 # If the dataset does not exit, continue
-                if not (test_by_arity in vars(self.dataset)['data'].keys()):
-                    print("{} does not exist. Skipping.".format(test_by_arity))
+                if len(self.dataset.data.get(test_by_arity, ())) == 0 :
+                    print("%%%%% {} does not exist. Skipping.".format(test_by_arity))
                     continue
 
                 print("**** Evaluating arity {} having {} samples".format(cur_arity, len(self.dataset.data[test_by_arity])))
@@ -86,13 +87,24 @@ class Tester:
         if normalizer == 0:
             raise Exception("No Samples were evaluated! Check your test or validation data!!")
 
+        # Normalize the global measure
         self.measure.normalize(normalizer)
 
-        for arity in self.measure_by_arity:
-            print("Results for arity {}".format(arity[5:]))
-            print(self.measure_by_arity[arity])
-        print("Results for ALL ARITIES in {} set".format(self.valid_or_test))
-        print(self.measure)
+        # Add the global measure (by ALL arities) to the dict
+        self.measure_by_arity["ALL"] = self.measure
+
+        # Print out results
+        pr_txt = "Results for ALL ARITIES in {} set".format(self.valid_or_test)
+        if test_by_arity:
+            for arity in self.measure_by_arity:
+                if arity == "ALL":
+                    print(pr_txt)
+                else:
+                    print("Results for arity {}".format(arity[5:]))
+                print(self.measure_by_arity[arity])
+        else:
+            print(pr_txt)
+            print(self.measure)
         return self.measure, self.measure_by_arity
 
     def eval_dataset(self, dataset):
@@ -152,6 +164,6 @@ class Tester:
     def allFactsAsTuples(self):
         tuples = []
         for spl in self.dataset.data:
-            for fact in self.dataset.data[spl]:
+            for fact in self.dataset.data.get(spl, ()):
                 tuples.append(tuple(fact))
         return tuples

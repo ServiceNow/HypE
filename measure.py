@@ -22,14 +22,19 @@ class Measure:
         return new_measure
 
     def __str__(self):
+        str_list = []
         for raw_or_fil in ["raw", "fil"]:
-            print("{} setting:".format(raw_or_fil.title()))
-            print("\tHit@1  = {}".format(self.hit1[raw_or_fil]))
-            print("\tHit@3  = {}".format(self.hit3[raw_or_fil]))
-            print("\tHit@10 = {}".format(self.hit10[raw_or_fil]))
-            print("\tMR  = {}".format(self.mr[raw_or_fil]))
-            print("\tMRR = {}".format(self.mrr[raw_or_fil]))
-            print("")
+            str_list.append("{} setting:".format(raw_or_fil.title()))
+            str_list.append("\tHit@1  = {}".format(self.hit1[raw_or_fil]))
+            str_list.append("\tHit@3  = {}".format(self.hit3[raw_or_fil]))
+            str_list.append("\tHit@10 = {}".format(self.hit10[raw_or_fil]))
+            str_list.append("\tMR  = {}".format(self.mr[raw_or_fil]))
+            str_list.append("\tMRR = {}".format(self.mrr[raw_or_fil]))
+            str_list.append("")
+        return '\n'.join(str_list)
+
+    def __repr__(self):
+        return self.__str__()
 
     def update(self, rank, raw_or_fil):
         if rank == 1:

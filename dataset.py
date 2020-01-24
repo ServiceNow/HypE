@@ -18,21 +18,22 @@ class Dataset:
         # Shuffle the train set
         np.random.shuffle(self.data['train'])
 
-        test_dir = os.path.join(self.dir, "test.txt")
-        if os.path.exists(test_dir):
-            self.data["test"] = self.read_test(test_dir)
-
+        # Load the test data
+        self.data["test"] = self.read_test(os.path.join(self.dir, "test.txt"))
         # Read the test files by arity, if they exist
         # If they do, then test output will be displayed by arity
         for i in range(2,self.max_arity+1):
             test_arity = "test_{}".format(i)
             file_path = os.path.join(self.dir, "test_{}.txt".format(i))
-            if os.path.exists(file_path):
-                self.data[test_arity] = self.read_test(file_path)
-        self.data["valid"] = self.read(os.path.exists(os.path.join(self.dir, "valid.txt")))
+            self.data[test_arity] = self.read_test(file_path)
+
+        self.data["valid"] = self.read(os.path.join(self.dir, "valid.txt"))
         self.batch_index = 0
 
     def read(self, file_path):
+        if not os.path.exists(file_path):
+            print("*** {} not found. Skipping. ***".format(file_path))
+            return ()
         with open(file_path, "r") as f:
             lines = f.readlines()
         tuples = np.zeros((len(lines), self.max_arity + 1))
@@ -41,6 +42,9 @@ class Dataset:
         return tuples
 
     def read_test(self, file_path):
+        if not os.path.exists(file_path):
+            print("*** {} not found. Skipping. ***".format(file_path))
+            return ()
         with open(file_path, "r") as f:
             lines = f.readlines()
         tuples = np.zeros((len(lines),  self.max_arity + 1))
