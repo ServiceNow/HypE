@@ -68,7 +68,7 @@ class Txt2GrphDataset(Dataset):
         tokens_b = relation + tokens_b
 
         # combine to one sample
-        cur_example = InputExample(guid=cur_id, tokens_a=tokens_a, tokens_b=tokens_b, is_next=is_same_relation)
+        cur_example = InputExample(guid=cur_id, rel_len=len(relation[0]), tokens_a=tokens_a, tokens_b=tokens_b, is_next=is_same_relation)
 
         # transform sample to features
         cur_features = convert_example_to_features(cur_example, self.seq_len, self.tokenizer)
@@ -165,10 +165,11 @@ class Txt2GrphDataset(Dataset):
 class InputExample(object):
     """A single training/test example for the language model."""
 
-    def __init__(self, guid, tokens_a, tokens_b=None, is_next=None, lm_labels=None):
+    def __init__(self, guid, rel_len, tokens_a, tokens_b=None, is_next=None, lm_labels=None):
         """Constructs a InputExample.
         Args:
             guid: Unique id for the example.
+            rel_len: the number of tokens constituting the relation
             tokens_a: string. The untokenized text of the first sequence. For single
             sequence tasks, only this sequence must be specified.
             tokens_b: (Optional) string. The untokenized text of the second sequence.
@@ -177,6 +178,7 @@ class InputExample(object):
             specified for train and dev examples, but not for test examples.
         """
         self.guid = guid
+        self.rel_len = rel_len
         self.tokens_a = tokens_a
         self.tokens_b = tokens_b
         self.is_next = is_next  # nextSentence
@@ -265,6 +267,7 @@ def convert_example_to_features(example, max_seq_length, tokenizer):
     """
     tokens_a = example.tokens_a
     tokens_b = example.tokens_b
+    rel_len = example.rel_len
     # Modifies `tokens_a` and `tokens_b` in place so that the total
     # length is less than the specified length.
     # Account for [CLS], [SEP], [SEP] with "- 3"
@@ -278,38 +281,34 @@ def convert_example_to_features(example, max_seq_length, tokenizer):
     # The convention in BERT is:
     # (a) For sequence pairs:
     #  tokens:   [CLS] is this jack ##son ##ville ? [SEP] no it is not . [SEP]
-    #  type_ids: 0   0  0    0    0     0       0 0    1  1  1  1   1 1
+    #  type_ids: 0     0  0    0    0     0       0 0     1  1  1  1   1 1
     # (b) For single sequences:
     #  tokens:   [CLS] the dog is hairy . [SEP]
     #  type_ids: 0   0   0   0  0     0 0
     #
+    # The proposed convention for txt2graph_BERT is:
+    # (a) For sequence pairs:
+    #  tokens:   [CLS] music * genre m.01 ##8 ##p ##j m.02 ##f ##ht ##q [SEP] music * genre m.0 ##ch ##gh m.08 ##53 ##g [SEP]
+    #  type_ids: 2     2     2 2     0    0   0   0   0    0   0    0   2     2     2 2     1   1    1    1    1    1    1
+    #
     # Where "type_ids" are used to indicate whether this is the first
-    # sequence or the second sequence. The embedding vectors for `type=0` and
-    # `type=1` were learned during pre-training and are added to the wordpiece
+    # sequence or the second sequence or whether it's a relation.
+    # The embedding vectors for `type=0` and `type=1` were learned during
+    # pre-training and are added to the wordpiece. `type=2` can be added
+    # and learnt for the relation identification.
     # embedding vector (and position vector). This is not *strictly* necessary
     # since the [SEP] token unambigiously separates the sequences, but it makes
     # it easier for the model to learn the concept of sequences.
     #
     # For classification tasks, the first vector (corresponding to [CLS]) is
     # used as as the "sentence vector". Note that this only makes sense because
-    # the entire model is fine-tuned.
-    tokens = []
-    segment_ids = []
-    tokens.append("[CLS]")
-    segment_ids.append(0)
-    for token in tokens_a:
-        tokens.append(token)
-        segment_ids.append(0)
-    tokens.append("[SEP]")
-    segment_ids.append(0)
+    # the entire model is fine-tuned and is bi-directional.
 
     assert len(tokens_b) > 0
-    for token in tokens_b:
-        tokens.append(token)
-        segment_ids.append(1)
-    tokens.append("[SEP]")
-    segment_ids.append(1)
-
+    tokens = ["[CLS]"] + tokens_a + ["[SEP]"] + tokens_b + ["[SEP]"]
+    segment_ids = [0] + [2] * rel_len + [0] * (len(tokens_a)-rel_len) + \
+                  [0] + [2] * rel_len + [1] * (len(tokens_b)-rel_len) + [1]
+    assert len(tokens) == len(segment_ids)
     input_ids = tokenizer.convert_tokens_to_ids(tokens)
 
     # The mask has 1 for real tokens and 0 for padding tokens. Only real
