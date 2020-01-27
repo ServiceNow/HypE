@@ -2,8 +2,10 @@ import torch
 import random
 import logging
 import itertools
-from torch.utils.data import DataLoader, Dataset, RandomSampler
+import numpy as np
+from scipy import stats
 from tqdm import tqdm, trange
+from torch.utils.data import DataLoader, Dataset, RandomSampler
 
 logger = logging.getLogger(__name__)
 
@@ -29,6 +31,7 @@ class Txt2GrphDataset(Dataset):
 
         self.all_rel_data = {}
         self.num_lines = 0
+        all_entities = {}
         with open(corpus_path, "r", encoding=encoding) as f:
             for line in tqdm(f, desc="Loading Dataset", total=corpus_lines):
                 line = line.strip()
@@ -36,6 +39,14 @@ class Txt2GrphDataset(Dataset):
                 items = line.split('\t')
                 rel = items[0]
                 entities = items[1:]
+
+                """
+                for e in entities:
+                    if e not in all_entities.keys():
+                        all_entities[e] = 1
+                    else:
+                        all_entities[e] += 1
+                """
                 if rel not in self.all_rel_data.keys():
                     self.all_rel_data[rel] = []
                     self.num_rels += 1
@@ -49,6 +60,15 @@ class Txt2GrphDataset(Dataset):
         for rel in self.rels:
             sample2remove = {"doc_id": rel, "line": len(self.all_rel_data[rel])-1}
             self.sample_to_doc.remove(sample2remove)
+
+        """
+        all_entities_bpe = {}
+        for k in list(all_entities.keys()) + list(self.all_rel_data.keys()):
+            all_entities_bpe[k] = len(self.tokenizer.tokenize(k))
+        print("check all_entities_bpe stats:")
+        print(stats.describe(list(all_entities_bpe.values())))
+        print(np.bincount(np.array(list(all_entities_bpe.values()))))
+        """
 
     def __len__(self):
         return self.num_lines - self.num_rels - 1
@@ -65,7 +85,6 @@ class Txt2GrphDataset(Dataset):
         tokens_b = self.special_tokenize(t2)
 
         tokens_a = relation + tokens_a
-        tokens_b = relation + tokens_b
 
         # combine to one sample
         cur_example = InputExample(guid=cur_id, rel_len=len(relation[0]), tokens_a=tokens_a, tokens_b=tokens_b, is_next=is_same_relation)
@@ -196,11 +215,12 @@ class InputFeatures(object):
         self.lm_label_ids = lm_label_ids
 
 
-def random_word(tokens, tokenizer):
+def random_word(tokens, tokenizer, do_mask=True):
     """
     Masking some random tokens for Language Model task with probabilities as in the original BERT paper.
     :param tokens: list of str, tokenized sentence.
     :param tokenizer: Tokenizer, object used for tokenization (we need it's vocab here)
+    :param no_mask: To mask or not to mask such is the question
     :return: (list of str, list of int), masked tokens and related labels for LM prediction
     """
     output_label = []
@@ -208,30 +228,33 @@ def random_word(tokens, tokenizer):
     # mask just one entity or relation
     pos = random.randint(0, len(tokens) - 1)
     masked_tokens = tokens
-    masked_tokens[pos] = ["[MASK]"] * (len(tokens[pos]))
-    masked_merged_tokens = list(itertools.chain(*masked_tokens))
     all_merged_tokens = list(itertools.chain(*tokens))
-
-    for mtoken, atoken in zip(masked_merged_tokens, all_merged_tokens):
-        # masked token
-        if mtoken == "[MASK]":
-            prob = random.random()
-
-            # 10% randomly change token to random token
-            if prob < 0.1:
-                mtoken = random.choice(list(tokenizer.vocab.items()))[0]
-            # append current token to output (we will predict these later)
-            try:
-                output_label.append(tokenizer.vocab[atoken])
-            except KeyError:
-                # For unknown words (should not occur with BPE vocab)
-                output_label.append(tokenizer.vocab["[UNK]"])
-                logger.warning("Cannot find token '{}' in vocab. Using [UNK] insetad".format(mtoken))
-        # not masked token
-        else:
-            # no masking token (will be ignored by loss function later)
-            output_label.append(-1)
-    assert len(masked_merged_tokens) == len(output_label)
+    if do_mask:
+        masked_tokens[pos] = ["[MASK]"] * (len(tokens[pos]))
+        masked_merged_tokens = list(itertools.chain(*masked_tokens))
+        #TODO: will the number of masks hint the model too much for a given entity or relation?
+        for mtoken, atoken in zip(masked_merged_tokens, all_merged_tokens):
+            # masked token
+            if mtoken == "[MASK]":
+                prob = random.random()
+                # 10% randomly change token to random token
+                if prob < 0.1:
+                    mtoken = random.choice(list(tokenizer.vocab.items()))[0]
+                # append current token to output (we will predict these later)
+                try:
+                    output_label.append(tokenizer.vocab[atoken])
+                except KeyError:
+                    # For unknown words (should not occur with BPE vocab)
+                    output_label.append(tokenizer.vocab["[UNK]"])
+                    logger.warning("Cannot find token '{}' in vocab. Using [UNK] instead".format(mtoken))
+            # not masked token
+            else:
+                # no masking token (will be ignored by loss function later)
+                output_label.append(-1)
+        assert len(masked_merged_tokens) == len(output_label)
+    else:
+        masked_merged_tokens = all_merged_tokens
+        output_label = [-1] * len(masked_merged_tokens)
     return masked_merged_tokens, output_label
 
 
@@ -288,8 +311,9 @@ def convert_example_to_features(example, max_seq_length, tokenizer):
     #
     # The proposed convention for txt2graph_BERT is:
     # (a) For sequence pairs:
-    #  tokens:   [CLS] music * genre m.01 ##8 ##p ##j m.02 ##f ##ht ##q [SEP] music * genre m.0 ##ch ##gh m.08 ##53 ##g [SEP]
-    #  type_ids: 2     2     2 2     0    0   0   0   0    0   0    0   2     2     2 2     1   1    1    1    1    1    1
+    #  m.018pj --(BPE)--> m.01 ##8 ##p ##j
+    #  tokens:   [CLS] music * genre m.01 ##8 ##p ##j m.02 ##f ##ht ##q [SEP] m.0 ##ch ##gh m.08 ##53 ##g [SEP]
+    #  type_ids: 0     2     2 2     0    0   0   0   0    0   0    0   0     1   1    1    1    1    1    1
     #
     # Where "type_ids" are used to indicate whether this is the first
     # sequence or the second sequence or whether it's a relation.
@@ -307,7 +331,7 @@ def convert_example_to_features(example, max_seq_length, tokenizer):
     assert len(tokens_b) > 0
     tokens = ["[CLS]"] + tokens_a + ["[SEP]"] + tokens_b + ["[SEP]"]
     segment_ids = [0] + [2] * rel_len + [0] * (len(tokens_a)-rel_len) + \
-                  [0] + [2] * rel_len + [1] * (len(tokens_b)-rel_len) + [1]
+                  [0] + [1] * (len(tokens_b)) + [1]
     assert len(tokens) == len(segment_ids)
     input_ids = tokenizer.convert_tokens_to_ids(tokens)
 
