@@ -15,6 +15,7 @@ import math
 class BaseClass(torch.nn.Module):
     def __init__(self):
         super(BaseClass, self).__init__()
+        self.best_mrr = torch.nn.Parameter(torch.tensor(0, dtype=torch.float64), requires_grad=False)
         self.cur_itr = torch.nn.Parameter(torch.tensor(0, dtype=torch.int32), requires_grad=False)
 
 
