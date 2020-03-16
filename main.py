@@ -314,11 +314,12 @@ if __name__ == '__main__':
     parser.add_argument('-stride', type=int, default=2)
     parser.add_argument('-num_iterations', type=int, default=1000)
     parser.add_argument('-batch_size', type=int, default=128)
-    parser.add_argument("-test", action="store_true")
-    parser.add_argument("-no_test_by_arity", action="store_true")
+    parser.add_argument("-test", action="store_true", help="If -test is set, then you must specify a -pretrained model. "
+                        + "This will perform testing on the pretrained model and save the output in -output_dir")
+    parser.add_argument("-no_test_by_arity", action="store_true", help="If set, then validation will be performed by arity.")
     parser.add_argument('-pretrained', type=str, default=None, help="A path to a trained model (.chkpnt file), which will be loaded if provided.")
     parser.add_argument('-output_dir', type=str, default=None, help="A path to the directory where the model will be saved and/or loaded from.")
-    parser.add_argument('-restartable', action="store_true", help="If restartable is set, then you must specify an output_dir")
+    parser.add_argument('-restartable', action="store_true", help="If restartable is set, you must specify an output_dir")
     args = parser.parse_args()
 
     if args.restartable and (args.output_dir is None):
