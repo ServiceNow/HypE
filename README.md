@@ -58,10 +58,17 @@ The default values for most of these parameters are the ones that were used to o
 
 - `hidden_drop`: drop out rate for hidden layer of all models.
 
+- `no_test_by_arity`: when set, test results will not be saved by arity, but as a whole. This generally makes testing faster. 
+
 - `test`: when set, this will test a trained model on the test dataset. If this option is present, then you must specify the path to a trained model using `-pretrained` argument.
 
-- `pretrained`: The path to a pretrained model file. If this path exists, then the code will load a pretrained model before starting the train or test process.
-The filename is expected to have the form `model_*.chkpnt`. The directory containing this file is expected to also contain the optimizer as `opt_*.chkpnt`, since it will also be loaded. 
+- `pretrained`: the path to a pretrained model file. If this path exists, then the code will load a pretrained model before starting the train or test process.
+The filename is expected to have the form `model_*.chkpnt`. The directory containing this file is expected to also contain the optimizer as `opt_*.chkpnt`, if training is to resume. 
+
+- `output_dir`: the path to the output directory where the results and models will be saved. If left empty, then a directory will be automatically created.
+
+- `restartable`: when set, the training job will be restartable: it will load the model from the last saved checkpoint in `output_dir`, as well as the `best_model`, and resume training from that point on.
+If this option is set, you must also specify `output_dir`.
 
 
 ## Training `HypE` and `HSimplE` 
