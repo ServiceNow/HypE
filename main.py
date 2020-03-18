@@ -45,6 +45,8 @@ class Experiment:
         self.best_model = None
         # Load the specified model and initialize based on given checkpoint (if any)
         self.load_model()
+        # Save the hyperparameters to the output_dir
+        self.save_hparams(args)
 
     def decompose_predictions(self, targets, predictions, max_length):
         positive_indices = np.where(targets > 0)[0]
@@ -273,7 +275,6 @@ class Experiment:
                 print("######## Saving the BEST MODEL")
 
             model_name = 'model_{}itr.chkpnt'.format(itr)
-            #model_name = 'model_{}itr.chkpnt'.format(itr) if itr else '{}.chkpnt'.format(self.model_name)
             opt_name = 'opt_{}itr.chkpnt'.format(itr) if itr else '{}.chkpnt'.format(self.model_name)
             measure_name = '{}_measure_{}itr.json'.format(test_or_valid, itr) if itr else '{}.json'.format(self.model_name)
             print("######## Saving the model {}".format(os.path.join(self.output_dir, model_name)))
@@ -296,6 +297,20 @@ class Experiment:
                     H[key] = vars(self.measure_by_arity[key])
                 with open(os.path.join(self.output_dir, measure_by_arity_name), 'w') as f:
                         json.dump(H, f, indent=4, sort_keys=True)
+
+
+    def save_hparams(self, args):
+        """
+        Save the hyperparameters of the model as a json file in the output_dir if train time.
+        If the output_dir contains an hparams.json file, then this will be overwritten
+        (for restartable jobs, this should not be an issue as the haparams are the same).
+        If the experiment is only for testing, save the hparams with a filename hparam_test.json
+        in order not to overwrite the trained model hparams (in case the pretrained model is saved in output_dir)
+        """
+        args_dict = vars(args)
+        hparams_name = "hparams_test.json" if args.test else "hparams.json"
+        with open(os.path.join(self.output_dir, hparams_name), 'w') as f:
+            json.dump(args_dict, f, indent=4, sort_keys=True)
 
 
 if __name__ == '__main__':
