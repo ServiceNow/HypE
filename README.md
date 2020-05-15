@@ -101,10 +101,6 @@ python main.py -model MCP -dataset JF17K -num_iterations 1000 -batch_size 128 -l
 python main.py -model MDitMult -dataset JF17K -num_iterations 1000 -batch_size 128 -lr 0.02 -emb_dim 200 -nr 10
 ```
 
-References
-=======
-If you use this package for published work, please cite the following paper:
-
 @inproceedings{fatemi2019knowledge,
   title={Knowledge Hypergraphs: Prediction Beyond Binary Relations},
   author={Fatemi, Bahare and Taslakian, Perouz and Vazquez, David and Poole, David},
@@ -112,6 +108,16 @@ If you use this package for published work, please cite the following paper:
   year={2020}
 }
 
+## Cite HypE
+
+If you use this package for published work, please cite the following paper:
+
+    @inproceedings{fatemi2019knowledge,
+    title={Knowledge Hypergraphs: Prediction Beyond Binary Relations},
+    author={Fatemi, Bahare and Taslakian, Perouz and Vazquez, David and Poole, David},
+    booktitle={IJCAI},
+    year={2020}
+    }
 
 Contact
 =======
