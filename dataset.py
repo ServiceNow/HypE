@@ -14,6 +14,7 @@ class Dataset:
         self.ent2id = {"":0}
         self.rel2id = {"":0}
         self.data = {}
+        print("Loading the dataset {} ....".format(ds_name))
         self.data["train"] = self.read(os.path.join(self.dir, "train.txt"))
         # Shuffle the train set
         np.random.shuffle(self.data['train'])
