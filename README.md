@@ -113,10 +113,10 @@ python main.py -model MDitMult -dataset JF17K -num_iterations 1000 -batch_size 1
 If you use this package for published work, please cite the following paper:
 
     @inproceedings{fatemi2019knowledge,
-    title={Knowledge Hypergraphs: Prediction Beyond Binary Relations},
-    author={Fatemi, Bahare and Taslakian, Perouz and Vazquez, David and Poole, David},
-    booktitle={IJCAI},
-    year={2020}
+      title={Knowledge Hypergraphs: Prediction Beyond Binary Relations},
+      author={Fatemi, Bahare and Taslakian, Perouz and Vazquez, David and Poole, David},
+      booktitle={IJCAI},
+      year={2020}
     }
 
 Contact
